@@ -1,0 +1,5144 @@
+SLIP 1
+Q.1 Write a Java Program to implement I/O Decorator for converting uppercase letters to lower case letters.
+import java.io.*;
+
+class LowercaseInputStream extends FilterInputStream {
+    public LowercaseInputStream(InputStream in) {
+        super(in);
+    }
+
+    @Override
+    public int read() throws IOException {
+        int c = super.read();
+        return (c == -1 ? c : Character.toLowerCase((char) c));
+    }
+
+    @Override
+    public int read(byte[] b, int offset, int len) throws IOException {
+        int result = super.read(b, offset, len);
+        for (int i = offset; i < offset + result; i++) {
+            b[i] = (byte) Character.toLowerCase((char) b[i]);
+        }
+        return result;
+    }
+}
+
+public class IODecoratorExample {
+    public static void main(String[] args) {
+        try {
+            // Taking input from the user
+            System.out.print("Enter text: ");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            String userInput = reader.readLine();
+
+            // Creating the decorator
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(userInput.getBytes());
+            LowercaseInputStream lowercaseInputStream = new LowercaseInputStream(inputStream);
+
+            // Reading and displaying the input in lowercase
+            System.out.println("Output in lowercase:");
+            int data;
+            while ((data = lowercaseInputStream.read()) != -1) {
+                System.out.print((char) data);
+            }
+
+            // Closing the streams
+            reader.close();
+            lowercaseInputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+Q.2 Write a python program to transform data with Principal Component Analysis (PCA). Use handwritten digit dataset.
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+from sklearn.datasets import load_digits
+
+# Load the digits dataset
+digits = load_digits()
+data = digits.data
+target = digits.target
+
+# Visualize a few digits before PCA
+fig, axes = plt.subplots(2, 5, figsize=(10, 5),
+                         subplot_kw={'xticks':[], 'yticks':[]},
+                         gridspec_kw=dict(hspace=0.1, wspace=0.1))
+
+for i, ax in enumerate(axes.flat):
+    ax.imshow(digits.images[i], cmap='binary', interpolation='nearest')
+    ax.text(0.05, 0.05, str(digits.target[i]),
+            transform=ax.transAxes, color='green')
+
+plt.show()
+
+# Apply PCA to reduce the dimensionality
+n_components = 2  # You can adjust the number of components as needed
+pca = PCA(n_components=n_components)
+transformed_data = pca.fit_transform(data)
+
+# Visualize the dataset after PCA
+plt.figure(figsize=(8, 6))
+for i in range(10):
+    plt.scatter(transformed_data[target == i, 0], transformed_data[target == i, 1],
+                label=str(i), alpha=0.7)
+
+plt.title('Handwritten Digit Dataset after PCA')
+plt.xlabel('Principal Component 1')
+plt.ylabel('Principal Component 2')
+plt.legend()
+plt.show()
+
+
+# import numpy as np
+# import matplotlib.pyplot as plt
+# from sklearn import datasets
+# from sklearn.decomposition import PCA
+
+# # Load the digits dataset
+# digits = datasets.load_digits()
+# X = digits.data
+# y = digits.target
+
+# # Perform PCA
+# pca = PCA(n_components=2)
+# X_pca = pca.fit_transform(X)
+
+# # Plot the original data and PCA-transformed data with digits
+# plt.figure(figsize=(12, 6))
+
+# plt.subplot(1, 2, 1)
+# plt.scatter(X[:, 0], X[:, 1], c=y, cmap='viridis', alpha=0.5)
+# plt.title('Original Data')
+# plt.xlabel('Feature 1')
+# plt.ylabel('Feature 2')
+
+# plt.subplot(1, 2, 2)
+# plt.scatter(X_pca[:, 0], X_pca[:, 1], c=y, cmap='viridis', alpha=0.5)
+# plt.title('Data after PCA')
+# plt.xlabel('Principal Component 1')
+# plt.ylabel('Principal Component 2')
+
+# plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+Q.3 Create a simple React component called Counter that displays a number and has two buttons: "Increment" and "Decrement." The number should start at 0 and change when the buttons are clicked. a. Use state to manage the number. b. Pass the initial number as a prop to the Counter component.
+// >>>COUNTER.JS
+
+import React, { useState } from 'react';
+
+const Counter = ({ initialNumber }) => {
+  const [count, setCount] = useState(initialNumber || 0);
+
+  const handleIncrement = () => {
+    setCount(count + 1);
+  };
+
+  const handleDecrement = () => {
+    setCount(count - 1);
+  };
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={handleIncrement}>Increment</button>
+      <button onClick={handleDecrement}>Decrement</button>
+    </div>
+  );
+};
+
+export default Counter;
+
+//>>>APP.JS
+
+import React from 'react';
+import Counter from './Counter.js'; // Make sure to adjust the path based on your file structure
+
+const App = () => {
+  return (
+    <div>
+      <h1>Slip 1</h1>
+      <Counter initialNumber={0} />
+    </div>
+  );
+};
+
+export default App;
+
+*********************************************************************************************
+*********************************************************************************************
+
+
+
+SLIP 2
+
+Q.1 Write a Java Program to implement Singleton pattern for multithreading.
+public class Singleton {
+    // Declare the volatile instance variable to ensure visibility across threads
+    private static volatile Singleton instance;
+
+    // Private constructor to prevent instantiation from other classes
+    private Singleton() {
+        // Initialize the instance as needed
+    }
+
+    // Double-Checked Locking to ensure only one instance is created
+    public static Singleton getInstance() {
+        if (instance == null) {
+            synchronized (Singleton.class) {
+                if (instance == null) {
+                    instance = new Singleton();
+                }
+            }
+        }
+        return instance;
+    }
+
+    // Add other methods or attributes as needed
+    public void showMessage() {
+        System.out.println("Hello from Singleton!");
+    }
+
+    public static void main(String[] args) {
+        // Create multiple threads to access the Singleton
+        Thread thread1 = new Thread(() -> {
+            Singleton singleton = Singleton.getInstance();
+            singleton.showMessage();
+        });
+
+        Thread thread2 = new Thread(() -> {
+            Singleton singleton = Singleton.getInstance();
+            singleton.showMessage();
+        });
+
+        // Start the threads
+        thread1.start();
+        thread2.start();
+    }
+}
+
+Q.2 Write a python program to implement simple Linear Regression for predicting house price.
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+
+data = pd.read_csv('.\csv\Housing.csv')
+X = data['area'].values.reshape(-1, 1)
+y = data['price'].values
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+model = LinearRegression()
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+slope = model.coef_[0]
+intercept = model.intercept_
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+print(f"Linear Regression Equation: price = {slope:.2f} * area + {intercept:.2f}")
+print(f"Mean Squared Error: {mse:.2f}")
+print(f"R-squared: {r2:.2f}")
+plt.scatter(X_test, y_test, color='blue', label='Actual Data')
+plt.plot(X_test, y_pred, color='red', linewidth=2, label='Regression Line')
+plt.xlabel('Area (sqft)')
+plt.ylabel('Price ($)')
+plt.title('House Price Prediction')
+plt.legend()
+plt.show()
+
+# price,area,bedrooms,bathrooms,stories,mainroad,guestroom,basement,hotwaterheating,airconditioning,parking,prefarea,furnishingstatus
+# 13300000,7420,4,2,3,yes,no,no,no,yes,2,yes,furnished
+# 12250000,8960,4,4,4,yes,no,no,no,yes,3,no,furnished
+# 12250000,9960,3,2,2,yes,no,yes,no,no,2,yes,semi-furnished
+# 12215000,7500,4,2,2,yes,no,yes,no,yes,3,yes,furnished
+# 11410000,7420,4,1,2,yes,yes,yes,no,yes,2,no,furnished
+# 10850000,7500,3,3,1,yes,no,yes,no,yes,2,yes,semi-furnished
+
+
+
+
+
+
+
+
+
+
+
+Q.3 Create a simple React component called Counter that displays a number and has two buttons: "Increment" and "Decrement." The number should start at 0 and change when the buttons are clicked. a. Use state to manage the number. b. Pass the initial number as a prop to the Counter component.
+// >>>COUNTER.JS
+
+import React, { useState } from 'react';
+
+const Counter = ({ initialNumber }) => {
+  const [count, setCount] = useState(initialNumber || 0);
+
+  const handleIncrement = () => {
+    setCount(count + 1);
+  };
+
+  const handleDecrement = () => {
+    setCount(count - 1);
+  };
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={handleIncrement}>Increment</button>
+      <button onClick={handleDecrement}>Decrement</button>
+    </div>
+  );
+};
+
+export default Counter;
+//>>>APP.JS
+
+import React from 'react';
+import Counter from './Counter.js'; // Make sure to adjust the path based on your file structure
+
+const App = () => {
+  return (
+    <div>
+      <h1>Slip 1</h1>
+      <Counter initialNumber={0} />
+    </div>
+  );
+};
+
+export default App;
+
+
+*********************************************************************************************
+*********************************************************************************************
+
+SLIP 3
+
+Q.1 Write a Java Program to implement Factory Design pattern for operating system example.
+// Product interface
+interface OperatingSystem {
+    void displayInfo();
+}
+
+// Concrete Products
+class Windows implements OperatingSystem {
+    @Override
+    public void displayInfo() {
+        System.out.println("This is Windows Operating System.");
+    }
+}
+
+class Linux implements OperatingSystem {
+    @Override
+    public void displayInfo() {
+        System.out.println("This is Linux Operating System.");
+    }
+}
+
+class MacOS implements OperatingSystem {
+    @Override
+    public void displayInfo() {
+        System.out.println("This is macOS Operating System.");
+    }
+}
+
+// Factory interface
+interface OperatingSystemFactory {
+    OperatingSystem createOperatingSystem();
+}
+
+// Concrete Factories
+class WindowsFactory implements OperatingSystemFactory {
+    @Override
+    public OperatingSystem createOperatingSystem() {
+        return new Windows();
+    }
+}
+
+class LinuxFactory implements OperatingSystemFactory {
+    @Override
+    public OperatingSystem createOperatingSystem() {
+        return new Linux();
+    }
+}
+
+class MacOSFactory implements OperatingSystemFactory {
+    @Override
+    public OperatingSystem createOperatingSystem() {
+        return new MacOS();
+    }
+}
+
+// Client class
+
+public class OperatingSystemClient {
+    public static void main(String[] args) {
+        // Using the Factory Design Pattern to create different operating systems
+        OperatingSystemFactory windowsFactory = new WindowsFactory();
+        OperatingSystem windowsOS = windowsFactory.createOperatingSystem();
+        windowsOS.displayInfo();
+
+        OperatingSystemFactory linuxFactory = new LinuxFactory();
+        OperatingSystem linuxOS = linuxFactory.createOperatingSystem();
+        linuxOS.displayInfo();
+
+        OperatingSystemFactory macosFactory = new MacOSFactory();
+        OperatingSystem macosOS = macosFactory.createOperatingSystem();
+        macosOS.displayInfo();
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Q.2 Write a python program to implement multiple Linear Regression for predicting house price.
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+
+data = pd.read_csv('.\csv\Housing.csv')
+X = data['area'].values.reshape(-1, 1)
+y = data['price'].values
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+model = LinearRegression()
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+slope = model.coef_[0]
+intercept = model.intercept_
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+print(f"Linear Regression Equation: price = {slope:.2f} * area + {intercept:.2f}")
+print(f"Mean Squared Error: {mse:.2f}")
+print(f"R-squared: {r2:.2f}")
+plt.scatter(X_test, y_test, color='blue', label='Actual Data')
+plt.plot(X_test, y_pred, color='red', linewidth=2, label='Regression Line')
+plt.xlabel('Area (sqft)')
+plt.ylabel('Price ($)')
+plt.title('House Price Prediction')
+plt.legend()
+plt.show()
+
+# price,area,bedrooms,bathrooms,stories,mainroad,guestroom,basement,hotwaterheating,airconditioning,parking,prefarea,furnishingstatus
+# 13300000,7420,4,2,3,yes,no,no,no,yes,2,yes,furnished
+# 12250000,8960,4,4,4,yes,no,no,no,yes,3,no,furnished
+# 12250000,9960,3,2,2,yes,no,yes,no,no,2,yes,semi-furnished
+# 12215000,7500,4,2,2,yes,no,yes,no,yes,3,yes,furnished
+# 11410000,7420,4,1,2,yes,yes,yes,no,yes,2,no,furnished
+# 10850000,7500,3,3,1,yes,no,yes,no,yes,2,yes,semi-furnished
+
+
+
+
+
+
+
+
+
+Q.3 Build a multi-page React application that includes two pages: "Home" and "About." a. Create a navigation bar with links to the "Home" and "About" pages. b. Implement routing using a library like React Router. c. Each page should have a unique URL and content (any).
+
+First Create “components” Folder In src folder And Paste Home.jsx And About.jsx in  components folder.
+
+
+// components/About.js
+import React from 'react';
+
+const About = () => {
+  return (
+    <div>
+      <h2>About Page</h2>
+      <p>This is the About Page with some information about the application.</p>
+    </div>
+  );
+};
+
+export default About;
+
+
+
+// components/Home.js
+import React from 'react';
+
+const Home = () => {
+  return (
+    <div>
+      <h2>Home Page</h2>
+      <p>Welcome to the Home Page!</p>
+    </div>
+  );
+};
+
+export default Home;
+
+
+
+
+Now Paste index.js and App.js in src.
+
+// App.js
+import React from 'react';
+import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
+import Home from './components/Home';
+import About from './components/About';
+
+const App = () => {
+  return (
+    <Router>
+      <div>
+      <h1>Slip 2</h1>
+        <nav>
+          <ul>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/about">About</Link>
+            </li>
+          </ul>
+        </nav>
+
+        <hr />
+
+        <Routes>
+          <Route path="/about" element={<About />} />
+          <Route path="/" element={<Home />} />
+        </Routes>
+      </div>
+    </Router>
+  );
+};
+
+export default App;
+
+
+
+
+
+
+// index.js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
+
+ReactDOM.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+  document.getElementById('root')
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+*********************************************************************************************
+*********************************************************************************************
+
+
+
+
+
+
+
+
+
+
+SLIP 4
+Q.1 Write a Java Program to implement Adapter pattern for Enumeration iterator.
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.StringTokenizer;
+
+// Adapter class to adapt Enumeration to Iterator
+class EnumerationIteratorAdapter<T> implements Iterator<T> {
+    private Enumeration<T> enumeration;
+
+    public EnumerationIteratorAdapter(Enumeration<T> enumeration) {
+        this.enumeration = enumeration;
+    }
+
+    @Override
+    public boolean hasNext() {
+        return enumeration.hasMoreElements();
+    }
+
+    @Override
+    public T next() {
+        return enumeration.nextElement();
+    }
+
+    @Override
+    public void remove() {
+        throw new UnsupportedOperationException("remove() method is not supported.");
+    }
+}
+
+// Adapter class to adapt StringTokenizer to Enumeration
+class StringTokenizerEnumerationAdapter implements Enumeration<String> {
+    private StringTokenizer tokenizer;
+
+    public StringTokenizerEnumerationAdapter(StringTokenizer tokenizer) {
+        this.tokenizer = tokenizer;
+    }
+
+    @Override
+    public boolean hasMoreElements() {
+        return tokenizer.hasMoreTokens();
+    }
+
+    @Override
+    public String nextElement() {
+        return tokenizer.nextToken();
+    }
+}
+
+public class AdapterPatternDemo {
+    public static void main(String[] args) {
+        // Create a StringTokenizer (source)
+        StringTokenizer tokenizer = new StringTokenizer("One Two Three Four", " ");
+
+        // Adapt the StringTokenizer to Enumeration using the adapter
+        Enumeration<String> enumeration = new StringTokenizerEnumerationAdapter(tokenizer);
+
+        // Adapt the Enumeration to Iterator using the adapter
+        Iterator<String> iterator = new EnumerationIteratorAdapter<>(enumeration);
+
+        // Use the Iterator interface to iterate through elements
+        while (iterator.hasNext()) {
+            System.out.println(iterator.next());
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Q.2 Write a python program to implement logistic Regression for predicting whether a person will buy the insurance or not. Use insurance_data.csv.
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix
+import matplotlib.pyplot as plt
+import seaborn as sns
+data= pd.read_csv("./csv/insurance_data.csv")
+X = data[['age']]
+y = data['bought_insurance']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+model = LogisticRegression()
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Accuracy: {accuracy * 100:.2f}%")
+conf_matrix = confusion_matrix(y_test, y_pred)
+plt.figure(figsize=(8, 6))
+sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', xticklabels=['Not Bought', 'Bought'], yticklabels=['Not Bought', 'Bought'])
+plt.xlabel('Predicted')
+plt.ylabel('Actual')
+plt.title('Confusion Matrix')
+plt.show()
+
+# age,bought_insurance
+# 22,0
+# 25,0
+# 47,1
+# 52,0
+# 46,1
+# 56,1
+# 55,0
+# 60,1
+# 62,1
+# 61,1
+# 18,0
+# 28,0
+# 27,0
+# 29,0
+# 49,1
+# 55,1
+# 25,1
+# 58,1
+# 19,0
+# 18,0
+# 21,0
+# 26,0
+# 40,1
+# 45,1
+# 50,1
+# 54,1
+# 23,0
+
+
+
+
+Q.3 Build a multi-page React application that includes two pages: "Home" and "About." a. Create a navigation bar with links to the "Home" and "About" pages. b. Implement routing using a library like React Router. c. Each page should have a unique URL and content (any).
+
+First Create “components” Folder In src folder And Paste Home.jsx And About.jsx in  components folder.
+
+
+// components/About.js
+import React from 'react';
+
+const About = () => {
+  return (
+    <div>
+      <h2>About Page</h2>
+      <p>This is the About Page with some information about the application.</p>
+    </div>
+  );
+};
+
+export default About;
+
+
+
+// components/Home.js
+import React from 'react';
+
+const Home = () => {
+  return (
+    <div>
+      <h2>Home Page</h2>
+      <p>Welcome to the Home Page!</p>
+    </div>
+  );
+};
+
+export default Home;
+
+
+
+
+Now Paste index.js and App.js in src.
+
+// App.js
+import React from 'react';
+import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
+import Home from './components/Home';
+import About from './components/About';
+
+const App = () => {
+  return (
+    <Router>
+      <div>
+      <h1>Slip 2</h1>
+        <nav>
+          <ul>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/about">About</Link>
+            </li>
+          </ul>
+        </nav>
+
+        <hr />
+
+        <Routes>
+          <Route path="/about" element={<About />} />
+          <Route path="/" element={<Home />} />
+        </Routes>
+      </div>
+    </Router>
+  );
+};
+
+export default App;
+
+
+
+
+
+
+// index.js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
+
+ReactDOM.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+  document.getElementById('root')
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*********************************************************************************************
+*********************************************************************************************
+
+
+
+
+
+
+
+SLIP 5
+Q.1 Write a Java Program to implement command pattern to test Remote Control
+// Command interface
+interface Command {
+    void execute();
+}
+
+// Concrete Command classes
+class LightOnCommand implements Command {
+    private Light light;
+
+    public LightOnCommand(Light light) {
+        this.light = light;
+    }
+
+    @Override
+    public void execute() {
+        light.turnOn();
+    }
+}
+
+class LightOffCommand implements Command {
+    private Light light;
+
+    public LightOffCommand(Light light) {
+        this.light = light;
+    }
+
+    @Override
+    public void execute() {
+        light.turnOff();
+    }
+}
+
+// Receiver class
+class Light {
+    public void turnOn() {
+        System.out.println("Light is ON");
+    }
+
+    public void turnOff() {
+        System.out.println("Light is OFF");
+    }
+}
+
+// Invoker class
+class RemoteControl {
+    private Command command;
+
+    public void setCommand(Command command) {
+        this.command = command;
+    }
+
+    public void pressButton() {
+        command.execute();
+    }
+}
+
+// Client
+public class RemoteControlTest {
+    public static void main(String[] args) {
+        // Creating instances
+        Light light = new Light();
+        Command lightOnCommand = new LightOnCommand(light);
+        Command lightOffCommand = new LightOffCommand(light);
+
+        RemoteControl remoteControl = new RemoteControl();
+
+        // Testing the remote control with the light
+        remoteControl.setCommand(lightOnCommand);
+        remoteControl.pressButton();
+
+        remoteControl.setCommand(lightOffCommand);
+        remoteControl.pressButton();
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+Q.2 Write a python program to implement logistic Regression for handwritten digit dataset.
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn import metrics
+import matplotlib.pyplot as plt
+digits = load_digits()
+X_train, X_test, y_train, y_test = train_test_split(digits.data, digits.target, test_size=0.2, random_state=42)
+model = LogisticRegression(max_iter=10000)
+model.fit(X_train, y_train)
+predictions = model.predict(X_test)
+accuracy = metrics.accuracy_score(y_test, predictions)
+print("Accuracy:", accuracy)
+plt.figure(figsize=(8, 8))
+for i in range(15):
+    plt.subplot(3, 5, i + 1)
+    plt.imshow(X_test[i].reshape(8, 8), cmap='gray')
+    plt.title(f"Predicted: {predictions[i]}")
+    plt.axis('off')
+plt.tight_layout()
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Q.3 Create a basic to do list application: (use useState() ) a. Build a component for adding, displaying, and deleting tasks. b. Use state to manage the list of tasks. c. Add a form for users to input new tasks. d. Display the list of tasks and provide a button to remove them. e. Add a counter for the total number of tasks.
+Paste below file in src as TodoApp.jsx
+import React, { useState } from 'react';
+
+const TodoApp = () => {
+  // State to manage the list of tasks
+  const [tasks, setTasks] = useState([]);
+  
+  // State to manage the input value for new tasks
+  const [newTask, setNewTask] = useState('');
+
+  // Function to handle adding a new task
+  const addTask = () => {
+    if (newTask.trim() !== '') {
+      setTasks([...tasks, { text: newTask, completed: false }]);
+      setNewTask('');
+    }
+  };
+
+  // Function to handle removing a task
+  const removeTask = (index) => {
+    const updatedTasks = [...tasks];
+    updatedTasks.splice(index, 1);
+    setTasks(updatedTasks);
+  };
+
+  // Function to handle toggling the completion status of a task
+  const toggleComplete = (index) => {
+    const updatedTasks = [...tasks];
+    updatedTasks[index].completed = !updatedTasks[index].completed;
+    setTasks(updatedTasks);
+  };
+
+  // Function to handle adding a new task when "Enter" key is pressed
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      addTask();
+    }
+  };
+
+  return (
+    <div>
+      <h1>Todo List</h1>
+      
+      {/* Form to input new tasks */}
+      <div>
+        <input 
+          type="text" 
+          value={newTask} 
+          onChange={(e) => setNewTask(e.target.value)} 
+          onKeyPress={handleKeyPress} 
+          placeholder="Enter a new task" 
+        />
+        <button onClick={addTask}>Add Task</button>
+      </div>
+
+      {/* Display the list of tasks */}
+      <ul>
+        {tasks.map((task, index) => (
+          <li 
+            key={index} 
+            style={{ textDecoration: task.completed ? 'line-through' : 'none' }}
+            onClick={() => toggleComplete(index)}
+          >
+            {task.text}
+            <button onClick={(e) => { e.stopPropagation(); removeTask(index); }}>
+              <span role="img" aria-label="trash">???</span>
+            </button>
+          </li>
+        ))}
+      </ul>
+
+      {/* Display the total number of tasks */}
+      <p>Total Tasks: {tasks.length}</p>
+    </div>
+  );
+};
+
+export default TodoApp;
+
+
+*********************************************************************************************
+*********************************************************************************************
+
+
+SLIP 6
+
+Q.1 Write a Java Program to implement undo command to test Ceiling fan.
+import java.util.Scanner;
+
+// Ceiling Fan class
+class CeilingFan {
+    private boolean isOn;
+
+    public CeilingFan() {
+        isOn = false;
+    }
+
+    public void turnOn() {
+        isOn = true;
+        System.out.println("Ceiling fan is turned on.");
+    }
+
+    public void turnOff() {
+        isOn = false;
+        System.out.println("Ceiling fan is turned off.");
+    }
+
+    public boolean isOn() {
+        return isOn;
+    }
+}
+
+// Remote Control class
+class RemoteControl {
+    private CeilingFan ceilingFan;
+    private boolean previousState;
+
+    public RemoteControl(CeilingFan fan) {
+        ceilingFan = fan;
+        previousState = false;
+    }
+
+    public void pressOn() {
+        previousState = ceilingFan.isOn();
+        ceilingFan.turnOn();
+    }
+
+    public void pressOff() {
+        previousState = ceilingFan.isOn();
+        ceilingFan.turnOff();
+    }
+
+    public void pressUndo() {
+        if (previousState) {
+            ceilingFan.turnOn();
+        } else {
+            ceilingFan.turnOff();
+        }
+    }
+}
+
+public class CeilingFanTests {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        CeilingFan fan = new CeilingFan();
+        RemoteControl remote = new RemoteControl(fan);
+
+        System.out.println("Ceiling Fan Test");
+        while (true) {
+            System.out.println("1. Turn On\n2. Turn Off\n3. Undo\n4. Exit");
+            System.out.print("Enter your choice: ");
+            int choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    remote.pressOn();
+                    break;
+                case 2:
+                    remote.pressOff();
+                    break;
+                case 3:
+                    remote.pressUndo();
+                    break;
+                case 4:
+                    System.out.println("Exiting the program.");
+                    System.exit(0);
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+                    break;
+            }
+        }
+    }
+}
+
+
+ Q.2 Write a python program to implement Polynomial Regression for positionsal.csv dataset.
+import pandas as pd
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+import matplotlib.pyplot as plt
+data = pd.read_csv('./csv/position_sal.csv')
+X = data[['Level']]
+y = data['Salary']
+poly_features = PolynomialFeatures(degree=4)  # You can adjust the degree as needed
+X_poly = poly_features.fit_transform(X)
+model = LinearRegression()
+model.fit(X_poly, y)
+y_pred = model.predict(X_poly)
+plt.scatter(X, y, color='blue', label='Actual Data')
+plt.plot(X, y_pred, color='red', label='Polynomial Regression')
+plt.xlabel('Position Level')
+plt.ylabel('Salary')
+plt.title('Polynomial Regression')
+plt.legend()
+plt.show()
+
+# Position,Level,Salary
+# Business Analyst,1,45000
+# Junior Consultant,2,50000
+# Senior Consultant,3,60000
+# Manager,4,80000
+# Country Manager,5,110000
+# Region Manager,6,150000
+# Partner,7,200000
+# Senior Partner,8,300000
+# C-level,9,500000
+# CEO,10,1000000
+plt.scatter(X_test, y_pred, color='red', label='Polynomial Regression')
+plt.xlabel('Level')
+plt.ylabel('Salary')
+plt.title('Polynomial Regression')
+plt.legend()
+plt.show()
+
+
+Q.3 Create a basic to do list application: (use useState() ) a. Build a component for adding, displaying, and deleting tasks. b. Use state to manage the list of tasks. c. Add a form for users to input new tasks. d. Display the list of tasks and provide a button to remove them. e. Add a counter for the total number of tasks.
+Paste below file in src as TodoApp.jsx
+import React, { useState } from 'react';
+
+const TodoApp = () => {
+  // State to manage the list of tasks
+  const [tasks, setTasks] = useState([]);
+  
+  // State to manage the input value for new tasks
+  const [newTask, setNewTask] = useState('');
+
+  // Function to handle adding a new task
+  const addTask = () => {
+    if (newTask.trim() !== '') {
+      setTasks([...tasks, { text: newTask, completed: false }]);
+      setNewTask('');
+    }
+  };
+
+  // Function to handle removing a task
+  const removeTask = (index) => {
+    const updatedTasks = [...tasks];
+    updatedTasks.splice(index, 1);
+    setTasks(updatedTasks);
+  };
+
+  // Function to handle toggling the completion status of a task
+  const toggleComplete = (index) => {
+    const updatedTasks = [...tasks];
+    updatedTasks[index].completed = !updatedTasks[index].completed;
+    setTasks(updatedTasks);
+  };
+
+  // Function to handle adding a new task when "Enter" key is pressed
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      addTask();
+    }
+  };
+
+  return (
+    <div>
+      <h1>Todo List</h1>
+      
+      {/* Form to input new tasks */}
+      <div>
+        <input 
+          type="text" 
+          value={newTask} 
+          onChange={(e) => setNewTask(e.target.value)} 
+          onKeyPress={handleKeyPress} 
+          placeholder="Enter a new task" 
+        />
+        <button onClick={addTask}>Add Task</button>
+      </div>
+
+      {/* Display the list of tasks */}
+      <ul>
+        {tasks.map((task, index) => (
+          <li 
+            key={index} 
+            style={{ textDecoration: task.completed ? 'line-through' : 'none' }}
+            onClick={() => toggleComplete(index)}
+          >
+            {task.text}
+            <button onClick={(e) => { e.stopPropagation(); removeTask(index); }}>
+              <span role="img" aria-label="trash">???</span>
+            </button>
+          </li>
+        ))}
+      </ul>
+
+      {/* Display the total number of tasks */}
+      <p>Total Tasks: {tasks.length}</p>
+    </div>
+  );
+};
+
+export default TodoApp;
+
+
+
+*********************************************************************************************
+*********************************************************************************************
+
+SLIP 7
+
+Q.1 Write a Java Program to implement State Pattern for Gumball Machine. Create instance variable that holds current state from there, we just need to handle all actions, behaviors and state transition that can happen.
+// 10 GumballMachine class
+class GumballMachine {
+    private State noQuarterState;
+    private State hasQuarterState;
+    private State soldState;
+    private State currentState;
+
+    private int gumballCount;
+
+    public GumballMachine(int numberOfGumballs) {
+        noQuarterState = new NoQuarterState(this);
+        hasQuarterState = new HasQuarterState(this);
+        soldState = new SoldState(this);
+        currentState = noQuarterState;
+        gumballCount = numberOfGumballs;
+    }
+
+    // Setters for states
+    public void setNoQuarterState() {
+        currentState = noQuarterState;
+    }
+
+    public void setHasQuarterState() {
+        currentState = hasQuarterState;
+    }
+
+    public void setSoldState() {
+        currentState = soldState;
+    }
+
+    // Methods to handle actions
+    public void insertQuarter() {
+        currentState.insertQuarter();
+    }
+
+    public void ejectQuarter() {
+        currentState.ejectQuarter();
+    }
+
+    public void turnCrank() {
+        currentState.turnCrank();
+        currentState.dispense();
+    }
+
+    public void releaseBall() {
+        System.out.println("A gumball comes rolling out the slot...");
+        if (gumballCount > 0) {
+            gumballCount--;
+        }
+    }
+
+    public int getGumballCount() {
+        return gumballCount;
+    }
+}
+
+// State interface
+interface State {
+    void insertQuarter();
+    void ejectQuarter();
+    void turnCrank();
+    void dispense();
+}
+
+// Concrete State: NoQuarterState
+class NoQuarterState implements State {
+    private GumballMachine gumballMachine;
+
+    public NoQuarterState(GumballMachine gumballMachine) {
+        this.gumballMachine = gumballMachine;
+    }
+
+    @Override
+    public void insertQuarter() {
+        System.out.println("You inserted a quarter.");
+        gumballMachine.setHasQuarterState();
+    }
+
+    @Override
+    public void ejectQuarter() {
+        System.out.println("You haven't inserted a quarter.");
+    }
+
+    @Override
+    public void turnCrank() {
+        System.out.println("You turned the crank, but there's no quarter.");
+    }
+
+    @Override
+    public void dispense() {
+        System.out.println("You need to pay first.");
+    }
+}
+
+// Concrete State: HasQuarterState
+class HasQuarterState implements State {
+    private GumballMachine gumballMachine;
+
+    public HasQuarterState(GumballMachine gumballMachine) {
+        this.gumballMachine = gumballMachine;
+    }
+
+    @Override
+    public void insertQuarter() {
+        System.out.println("You can't insert another quarter.");
+    }
+
+    @Override
+    public void ejectQuarter() {
+        System.out.println("Quarter returned.");
+        gumballMachine.setNoQuarterState();
+    }
+
+    @Override
+    public void turnCrank() {
+        System.out.println("You turned the crank...");
+        gumballMachine.setSoldState();
+    }
+
+    @Override
+    public void dispense() {
+        System.out.println("No gumball dispensed.");
+    }
+}
+
+// Concrete State: SoldState
+class SoldState implements State {
+    private GumballMachine gumballMachine;
+
+    public SoldState(GumballMachine gumballMachine) {
+        this.gumballMachine = gumballMachine;
+    }
+
+    @Override
+    public void insertQuarter() {
+        System.out.println("Please wait, we're already giving you a gumball.");
+    }
+
+    @Override
+    public void ejectQuarter() {
+        System.out.println("Sorry, you already turned the crank.");
+    }
+
+    @Override
+    public void turnCrank() {
+        System.out.println("Turning the crank twice doesn't get you another gumball.");
+    }
+
+    @Override
+    public void dispense() {
+        gumballMachine.releaseBall();
+        if (gumballMachine.getGumballCount() > 0) {
+            gumballMachine.setNoQuarterState();
+        } else {
+            System.out.println("Oops, out of gumballs!");
+            gumballMachine.setNoQuarterState();
+        }
+    }
+}
+
+public class GumballMachineTest {
+    public static void main(String[] args) {
+        GumballMachine gumballMachine = new GumballMachine(5);
+
+        System.out.println("Gumball Machine Example:");
+        System.out.println("Current gumball count: " + gumballMachine.getGumballCount());
+
+        gumballMachine.insertQuarter();
+        gumballMachine.turnCrank();
+
+        gumballMachine.insertQuarter();
+        gumballMachine.ejectQuarter();
+        gumballMachine.turnCrank();
+
+        gumballMachine.insertQuarter();
+        gumballMachine.turnCrank();
+        gumballMachine.insertQuarter();
+        gumballMachine.turnCrank();
+
+        gumballMachine.insertQuarter();
+        gumballMachine.turnCrank();
+        gumballMachine.insertQuarter();
+        gumballMachine.turnCrank();
+        gumballMachine.insertQuarter();
+        gumballMachine.turnCrank();
+
+        System.out.println("Final gumball count: " + gumballMachine.getGumballCount());
+    }
+}
+
+
+
+
+
+
+Q.2 Write a python program to implement Decision Tree Model for classification. Use Decision_Tree_Dataset.csv
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+# Load the dataset from CSV
+data = pd.read_csv('./csv/Decision_Tree_Dataset.csv')
+
+# Extract features (X) and target variable (y)
+X = data.drop('Target', axis=1)
+y = data['Target']
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Create a Decision Tree classifier
+clf = DecisionTreeClassifier(random_state=42)
+
+# Train the classifier on the training data
+clf.fit(X_train, y_train)
+
+# Make predictions on the testing data
+predictions = clf.predict(X_test)
+
+# Evaluate the model
+accuracy = accuracy_score(y_test, predictions)
+print("Accuracy:", accuracy)
+
+print("\nClassification Report:")
+print(classification_report(y_test, predictions))
+
+print("\nConfusion Matrix:")
+print(confusion_matrix(y_test, predictions))
+
+# program to make csv file
+# import pandas as pd
+# from sklearn.datasets import make_classification
+
+# # Create a synthetic dataset for Decision Tree
+# X, y = make_classification(
+#     n_samples=1000,        # Number of samples
+#     n_features=5,          # Number of features
+#     n_informative=3,       # Number of informative features
+#     n_redundant=2,         # Number of redundant features
+#     n_classes=2,           # Number of classes (binary classification)
+#     random_state=42        # Random state for reproducibility
+# )
+
+# # Create a DataFrame to hold the synthetic dataset
+# columns = [f"Feature_{i+1}" for i in range(X.shape[1])]
+# columns.append('Target')
+
+# decision_tree_data = pd.DataFrame(data=pd.concat([pd.DataFrame(X, columns=columns[:-1]), pd.DataFrame(y, columns=['Target'])], axis=1))
+
+# # Save the synthetic dataset to a CSV file
+# decision_tree_data.to_csv('./csv/Decision_Tree_Dataset.csv', index=False)
+Q.3 Create two components - ParentComponent, ChildComponent a. ParentComponent passes prop as name to ChildComponent b. ChildComponent displays name e.g. “ Hi <name>”
+Create A Folder Named “ParentComponent” In src folder and inside ParentComponent create folder “ChildComponent”
+Paste ParentComponent.jsx in ParentComponent Folder
+// ParentComponent.jsx
+import React from 'react';
+import ChildComponent from './ChildComponent/ChildComponent';
+
+const ParentComponent = () => {
+  const name = 'Ibram'; // You can change this value
+
+  return (
+    <div>
+      {/* <h1>Parent Component</h1> */}
+      <ChildComponent name={name} />
+    </div>
+  );
+};
+
+export default ParentComponent;
+
+
+paste ChildComponent.jsx in ChildComponent folder
+// ChildComponent.jsx
+import React from 'react';
+
+const ChildComponent = (props) => {
+  return (
+    <div>
+      {/* <h2>Child Component</h2> */}
+      <p>Hi {props.name}</p>
+    </div>
+  );
+};
+
+export default ChildComponent;
+
+
+
+Add Below App.js File Into src
+// src/slip4/App.js
+import React from 'react';
+import ParentComponent from './ParentComponent/ParentComponent';
+
+const App = () => {
+  return (
+    <div>
+      <h1>Slip 4</h1>
+      <ParentComponent />
+    </div>
+  );
+};
+
+export default App;
+
+
+
+
+
+
+
+*********************************************************************************************
+*********************************************************************************************
+
+
+
+
+
+
+
+
+
+
+
+SLIP 8
+Q.1 Write a Java program to implement Adapter pattern to design Heart Model to Beat Model.
+// Target interface
+interface Heart {
+    void beat();
+}
+// Adaptee interface
+interface BeatModel {
+    void pulse();
+}
+
+// Adaptee class
+class SimpleBeatModel implements BeatModel {
+    @Override
+    public void pulse() {
+        System.out.println("Heart is pulsing...");
+    }
+}
+
+// Adapter class
+class BeatModelAdapter implements Heart {
+    private BeatModel beatModel;
+
+    public BeatModelAdapter(BeatModel beatModel) {
+        this.beatModel = beatModel;
+    }
+
+    @Override
+    public void beat() {
+        beatModel.pulse();
+    }
+}
+// Client code
+public class AdapterPatternExample {
+    public static void main(String[] args) {
+        // Create an instance of the Adaptee (BeatModel)
+        BeatModel beatModel = new SimpleBeatModel();
+
+        // Create an instance of the Adapter, passing the Adaptee to it
+        Heart heart = new BeatModelAdapter(beatModel);
+
+        // Use the Adapter to call the target method
+        heart.beat();
+    }
+}
+
+
+Q.2 Write a python program to implement linear SVM for Regression. Use position_sal.csv.
+import pandas as pd
+from sklearn.svm import SVR
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import mean_squared_error
+import matplotlib.pyplot as plt
+data = pd.read_csv('./csv/position_sal.csv')
+X = data.iloc[:, 1:2].values  # Assuming the independent variable is in the second column
+y = data.iloc[:, -1].values   # Assuming the dependent variable (target) is in the last column
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+sc_X = StandardScaler()
+sc_y = StandardScaler()
+X_train = sc_X.fit_transform(X_train)
+X_test = sc_X.transform(X_test)
+y_train = sc_y.fit_transform(y_train.reshape(-1, 1)).ravel()
+svm_regressor = SVR(kernel='linear')
+svm_regressor.fit(X_train, y_train)
+y_pred = svm_regressor.predict(X_test)
+y_pred = y_pred.reshape(-1, 1)  # Reshape predictions to match the expected shape for inverse_transform
+y_pred = sc_y.inverse_transform(y_pred)  # Inverse transform predictions to original scale
+rmse = mean_squared_error(y_test, y_pred, squared=False)
+print("Root Mean Squared Error (RMSE):", rmse)
+plt.scatter(X_test, y_test, color='blue', label='Actual')
+plt.scatter(X_test, y_pred, color='red', label='Predicted')
+plt.title('Linear SVM Regression')
+plt.xlabel('Position Level')
+plt.ylabel('Salary')
+plt.legend()
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Q.3 Create a basic to do list application: (use useState() ) a. Build a component for adding, displaying, and deleting tasks. b. Use state to manage the list of tasks. c. Add a form for users to input new tasks. d. Display the list of tasks and provide a button to remove them. e. Add a counter for the total number of tasks.
+Paste below file in src as TodoApp.jsx
+import React, { useState } from 'react';
+
+const TodoApp = () => {
+  // State to manage the list of tasks
+  const [tasks, setTasks] = useState([]);
+  
+  // State to manage the input value for new tasks
+  const [newTask, setNewTask] = useState('');
+
+  // Function to handle adding a new task
+  const addTask = () => {
+    if (newTask.trim() !== '') {
+      setTasks([...tasks, { text: newTask, completed: false }]);
+      setNewTask('');
+    }
+  };
+
+  // Function to handle removing a task
+  const removeTask = (index) => {
+    const updatedTasks = [...tasks];
+    updatedTasks.splice(index, 1);
+    setTasks(updatedTasks);
+  };
+
+  // Function to handle toggling the completion status of a task
+  const toggleComplete = (index) => {
+    const updatedTasks = [...tasks];
+    updatedTasks[index].completed = !updatedTasks[index].completed;
+    setTasks(updatedTasks);
+  };
+
+  // Function to handle adding a new task when "Enter" key is pressed
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      addTask();
+    }
+  };
+
+  return (
+    <div>
+      <h1>Todo List</h1>
+      
+      {/* Form to input new tasks */}
+      <div>
+        <input 
+          type="text" 
+          value={newTask} 
+          onChange={(e) => setNewTask(e.target.value)} 
+          onKeyPress={handleKeyPress} 
+          placeholder="Enter a new task" 
+        />
+        <button onClick={addTask}>Add Task</button>
+      </div>
+
+      {/* Display the list of tasks */}
+      <ul>
+        {tasks.map((task, index) => (
+          <li 
+            key={index} 
+            style={{ textDecoration: task.completed ? 'line-through' : 'none' }}
+            onClick={() => toggleComplete(index)}
+          >
+            {task.text}
+            <button onClick={(e) => { e.stopPropagation(); removeTask(index); }}>
+              <span role="img" aria-label="trash">???</span>
+            </button>
+          </li>
+        ))}
+      </ul>
+
+      {/* Display the total number of tasks */}
+      <p>Total Tasks: {tasks.length}</p>
+    </div>
+  );
+};
+
+export default TodoApp;
+
+
+
+*********************************************************************************************
+*********************************************************************************************
+
+
+SLIP 9
+Q.1 Write a Java Program to implement Strategy Design pattern for arithmetic operations.
+import java.util.Scanner;
+// Strategy interface
+interface ArithmeticOperation {
+    int performOperation(int num1, int num2);
+}
+
+// Concrete strategy classes
+class AddOperation implements ArithmeticOperation {
+    @Override
+    public int performOperation(int num1, int num2) {
+        return num1 + num2;
+    }
+}
+
+class SubtractOperation implements ArithmeticOperation {
+    @Override
+    public int performOperation(int num1, int num2) {
+        return num1 - num2;
+    }
+}
+
+class MultiplyOperation implements ArithmeticOperation {
+    @Override
+    public int performOperation(int num1, int num2) {
+        return num1 * num2;
+    }
+}
+
+class DivideOperation implements ArithmeticOperation {
+    @Override
+    public int performOperation(int num1, int num2) {
+        if (num2 != 0) {
+            return num1 / num2;
+        } else {
+            System.out.println("Cannot divide by zero.");
+            return 0;
+        }
+    }
+}
+// Context class
+class Calculator {
+    private ArithmeticOperation arithmeticOperation;
+
+    public Calculator(ArithmeticOperation arithmeticOperation) {
+        this.arithmeticOperation = arithmeticOperation;
+    }
+
+    public void setArithmeticOperation(ArithmeticOperation arithmeticOperation) {
+        this.arithmeticOperation = arithmeticOperation;
+    }
+
+    public int executeOperation(int num1, int num2) {
+        return arithmeticOperation.performOperation(num1, num2);
+    }
+}
+
+// Client code
+public class StrategyPatternExample {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Accept values from the user
+        System.out.print("Enter the first number: ");
+        int num1 = scanner.nextInt();
+
+        System.out.print("Enter the second number: ");
+        int num2 = scanner.nextInt();
+
+        // Create context with initial strategy (AddOperation)
+        Calculator calculator = new Calculator(new AddOperation());
+
+        // Perform arithmetic operations
+        int resultAdd = calculator.executeOperation(num1, num2);
+        System.out.println("Addition result: " + resultAdd);
+
+        calculator.setArithmeticOperation(new SubtractOperation());
+        int resultSubtract = calculator.executeOperation(num1, num2);
+        System.out.println("Subtraction result: " + resultSubtract);
+
+        calculator.setArithmeticOperation(new MultiplyOperation());
+        int resultMultiply = calculator.executeOperation(num1, num2);
+        System.out.println("Multiplication result: " + resultMultiply);
+
+        calculator.setArithmeticOperation(new DivideOperation());
+        int resultDivide = calculator.executeOperation(num1, num2);
+        System.out.println("Division result: " + resultDivide);
+
+        scanner.close();
+    }
+}
+
+
+Q.2 Write a python program to implement linear SVM for Classification. Use iris.csv.
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.svm import LinearSVC
+from sklearn.metrics import accuracy_score, classification_report
+from sklearn.preprocessing import StandardScaler
+data = pd.read_csv('./csv/Iris.csv')
+X = data.iloc[:, :-1]  # Features
+y = data.iloc[:, -1]   # Target
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+svm_classifier = LinearSVC()
+svm_classifier.fit(X_train_scaled, y_train)
+predictions = svm_classifier.predict(X_test_scaled)
+accuracy = accuracy_score(y_test, predictions)
+report = classification_report(y_test, predictions)
+print(f"Accuracy: {accuracy}")
+print("Classification Report:\n", report)
+
+# "sepal.length","sepal.width","petal.length","petal.width","variety"
+# 5.1,3.5,1.4,.2,"Setosa"
+# 4.9,3,1.4,.2,"Setosa"
+# 4.7,3.2,1.3,.2,"Setosa"
+# 4.6,3.1,1.5,.2,"Setosa"
+# 5,3.6,1.4,.2,"Setosa"
+# 5.4,3.9,1.7,.4,"Setosa"
+# 4.6,3.4,1.4,.3,"Setosa"
+# 5,3.4,1.5,.2,"Setosa"
+# 6,2.9,4.5,1.5,"Versicolor"
+# 5.7,2.6,3.5,1,"Versicolor"
+# 5.5,2.4,3.8,1.1,"Versicolor"
+# 5.5,2.4,3.7,1,"Versicolor"
+# 5.8,2.7,3.9,1.2,"Versicolor"
+# 6,2.7,5.1,1.6,"Versicolor"
+# 5.4,3,4.5,1.5,"Versicolor"
+# 6,3.4,4.5,1.6,"Versicolor"
+# 6.7,3.1,4.7,1.5,"Versicolor"
+# 6.3,3.4,5.6,2.4,"Virginica"
+# 6.4,3.1,5.5,1.8,"Virginica"
+# 6,3,4.8,1.8,"Virginica"
+# 6.9,3.1,5.4,2.1,"Virginica"
+# 6.7,3.1,5.6,2.4,"Virginica"
+# 6.9,3.1,5.1,2.3,"Virginica"
+
+
+
+
+
+
+
+
+Q.3 Create two components - ParentComponent, ChildComponent a. ParentComponent passes prop as name to ChildComponent b. ChildComponent displays name e.g. “ Hi <name>”
+Create A Folder Named “ParentComponent” In src folder and inside ParentComponent create folder “ChildComponent”
+Paste ParentComponent.jsx in ParentComponent Folder
+
+// ParentComponent.jsx
+import React from 'react';
+import ChildComponent from './ChildComponent/ChildComponent';
+
+const ParentComponent = () => {
+  const name = 'Ibram'; // You can change this value
+
+  return (
+    <div>
+      {/* <h1>Parent Component</h1> */}
+      <ChildComponent name={name} />
+    </div>
+  );
+};
+
+export default ParentComponent;
+
+
+paste ChildComponent.jsx in ChildComponent folder
+// ChildComponent.jsx
+import React from 'react';
+
+const ChildComponent = (props) => {
+  return (
+    <div>
+      {/* <h2>Child Component</h2> */}
+      <p>Hi {props.name}</p>
+    </div>
+  );
+};
+
+export default ChildComponent;
+
+Add Below App.js File Into src
+// src/slip4/App.js
+import React from 'react';
+import ParentComponent from './ParentComponent/ParentComponent';
+
+const App = () => {
+  return (
+    <div>
+      <h1>Slip 4</h1>
+      <ParentComponent />
+    </div>
+  );
+};
+
+export default App;
+
+
+
+
+
+
+
+
+
+
+*********************************************************************************************
+*********************************************************************************************
+
+
+
+
+
+
+
+
+
+SLIP 10
+Q.1 Write a Java Program to implement Façade design pattern for Shape. 
+// Complex subsystem - Circle
+class Circle {
+    public void draw() {
+        System.out.println("Drawing a Circle");
+    }
+}
+
+// Complex subsystem - Rectangle
+class Rectangle {
+    public void draw() {
+        System.out.println("Drawing a Rectangle");
+    }
+}
+
+// Complex subsystem - Square
+class Square {
+    public void draw() {
+        System.out.println("Drawing a Square");
+    }
+}
+
+// Facade class
+class ShapeFacade {
+    private Circle circle;
+    private Rectangle rectangle;
+    private Square square;
+
+    public ShapeFacade() {
+        this.circle = new Circle();
+        this.rectangle = new Rectangle();
+        this.square = new Square();
+    }
+
+    public void drawCircle() {
+        circle.draw();
+    }
+
+    public void drawRectangle() {
+        rectangle.draw();
+    }
+
+    public void drawSquare() {
+        square.draw();
+    }
+}
+
+// Client code
+public class FacadePatternExample {
+    public static void main(String[] args) {
+        // Using the facade to draw different shapes
+        ShapeFacade shapeFacade = new ShapeFacade();
+
+        System.out.println("Drawing shapes using Facade:");
+        shapeFacade.drawCircle();
+        shapeFacade.drawRectangle();
+        shapeFacade.drawSquare();
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Q.2 Write a python program to implement k-nearest Neighbors algorithm to build a prediction model. Use Iris Dataset.
+import pandas as pd
+from sklearn.datasets import load_iris
+iris = load_iris()
+iris.feature_names
+iris.target_names
+df = pd.DataFrame(iris.data,columns=iris.feature_names)
+df.head()
+df['target'] = iris.target
+df.head()
+df[df.target==1].head()
+df[df.target==2].head()
+df['flower_name'] =df.target.apply(lambda x: iris.target_names[x])
+df.head()
+df[45:55]
+df0 = df[:50]
+df1 = df[50:100]
+df2 = df[100:]
+import matplotlib.pyplot as plt
+plt.xlabel('Sepal Length')
+plt.ylabel('Sepal Width')
+plt.scatter(df0['sepal length (cm)'], df0['sepal width (cm)'],color="green",marker='+')
+plt.scatter(df1['sepal length (cm)'], df1['sepal width (cm)'],color="blue",marker='.')
+plt.xlabel('Petal Length')
+plt.ylabel('Petal Width')
+plt.scatter(df0['petal length (cm)'], df0['petal width (cm)'],color="green",marker='+')
+plt.scatter(df1['petal length (cm)'], df1['petal width (cm)'],color="blue",marker='.')
+from sklearn.model_selection import train_test_split
+X = df.drop(['target','flower_name'], axis='columns')
+y = df.target
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
+len(X_train)
+len(X_test)
+from sklearn.neighbors import KNeighborsClassifier
+knn = KNeighborsClassifier(n_neighbors=10)
+knn.fit(X_train,y_train)
+print(knn.score(X_test, y_test))
+print(knn.predict([[4.8,3.0,1.5,0.3]]))
+from sklearn.metrics import confusion_matrix
+y_pred = knn.predict(X_test)
+cm = confusion_matrix(y_test, y_pred)
+print(cm)
+import matplotlib.pyplot as plt
+import seaborn as sn
+plt.figure(figsize=(7,5))
+sn.heatmap(cm, annot=True)
+plt.xlabel('Predicted')
+plt.ylabel('Truth')
+plt.show()
+from sklearn.metrics import classification_report
+print(classification_report(y_test, y_pred))
+
+
+
+
+Q.3 Create a basic todo list application: (use useReducer() ) a. Build a component for adding, displaying, and deleting tasks. b. Use state to manage the list of tasks. c. Add a form for users to input new tasks. d. Display the list of tasks and provide a button to remove them. e. Add a counter for the total number of tasks.
+Paste below file in src as TodoApp.jsx
+
+import React, { useState, useReducer } from 'react';
+
+// Action types
+const ADD_TASK = 'ADD_TASK';
+const REMOVE_TASK = 'REMOVE_TASK';
+const TOGGLE_COMPLETE = 'TOGGLE_COMPLETE';
+
+// Reducer function
+const todoReducer = (state, action) => {
+  switch (action.type) {
+    case ADD_TASK:
+      return [...state, { text: action.payload, completed: false }];
+    case REMOVE_TASK:
+      const updatedTasks = [...state];
+      updatedTasks.splice(action.payload, 1);
+      return updatedTasks;
+    case TOGGLE_COMPLETE:
+      return state.map((task, index) =>
+        index === action.payload ? { ...task, completed: !task.completed } : task
+      );
+    default:
+      return state;
+  }
+};
+
+const TodoApp = () => {
+  // State and dispatch using useReducer
+  const [tasks, dispatch] = useReducer(todoReducer, []);
+  
+  // State to manage the input value for new tasks
+  const [newTask, setNewTask] = useState('');
+
+  // Function to handle adding a new task
+  const addTask = () => {
+    if (newTask.trim() !== '') {
+      dispatch({ type: ADD_TASK, payload: newTask });
+      setNewTask('');
+    }
+  };
+
+  // Function to handle removing a task
+  const removeTask = (index) => {
+    dispatch({ type: REMOVE_TASK, payload: index });
+  };
+
+  // Function to handle toggling the completion status of a task
+  const toggleComplete = (index) => {
+    dispatch({ type: TOGGLE_COMPLETE, payload: index });
+  };
+
+  // Function to handle adding a new task when "Enter" key is pressed
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      addTask();
+    }
+  };
+
+  return (
+    <div>
+      <h1>Todo List</h1>
+      
+      {/* Form to input new tasks */}
+      <div>
+        <input 
+          type="text" 
+          value={newTask} 
+          onChange={(e) => setNewTask(e.target.value)} 
+          onKeyPress={handleKeyPress} 
+          placeholder="Enter a new task" 
+        />
+        <button onClick={addTask}>Add Task</button>
+      </div>
+
+      {/* Display the list of tasks */}
+      <ul>
+        {tasks.map((task, index) => (
+          <li 
+            key={index} 
+            style={{ textDecoration: task.completed ? 'line-through' : 'none' }}
+            onClick={() => toggleComplete(index)}
+          >
+            {task.text}
+            <button onClick={(e) => { e.stopPropagation(); removeTask(index); }}>
+              <span role="img" aria-label="trash">???</span>
+            </button>
+          </li>
+        ))}
+      </ul>
+
+      {/* Display the total number of tasks */}
+      <p>Total Tasks: {tasks.length}</p>
+    </div>
+  );
+};
+
+export default TodoApp;
+
+
+
+
+
+
+
+
+*********************************************************************************************
+*********************************************************************************************
+
+
+
+
+SLIP 11
+Q.1 Write a Java Program to implement Abstract Factory Pattern for Bank and Loan.
+import java.util.Scanner;
+
+// Abstract Bank class
+interface Bank {
+    String getBankName();
+}
+
+// Concrete Bank classes
+class SBI implements Bank {
+    @Override
+    public String getBankName() {
+        return "SBI Bank";
+    }
+}
+
+class ICICI implements Bank {
+    @Override
+    public String getBankName() {
+        return "ICICI Bank";
+    }
+}
+
+class Kotak implements Bank {
+    @Override
+    public String getBankName() {
+        return "KOTAK Bank";
+    }
+}
+
+// Abstract Loan class
+abstract class Loan {
+    abstract String getLoanType();
+    abstract double calculateEMI(double loanAmount, double interestRate, int yearsToRepay);
+}
+
+// Concrete Loan classes
+class HomeLoan extends Loan {
+    @Override
+    String getLoanType() {
+        return "Home Loan";
+    }
+
+    @Override
+    double calculateEMI(double loanAmount, double interestRate, int yearsToRepay) {
+        // Formula for EMI calculation: EMI = [P * r * (1 + r)^n] / [(1 + r)^n - 1]
+        double r = interestRate / 1200; // Monthly interest rate
+        int n = yearsToRepay * 12; // Total number of payments
+
+        double emi = (loanAmount * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+        return emi;
+    }
+}
+
+class EducationLoan extends Loan {
+    @Override
+    String getLoanType() {
+        return "Education Loan";
+    }
+
+    @Override
+    double calculateEMI(double loanAmount, double interestRate, int yearsToRepay) {
+        // Formula for EMI calculation: EMI = [P * r * (1 + r)^n] / [(1 + r)^n - 1]
+        double r = interestRate / 1200; // Monthly interest rate
+        int n = yearsToRepay * 12; // Total number of payments
+
+        double emi = (loanAmount * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+        return emi;
+    }
+}
+
+// Abstract Factory interface
+interface AbstractLoanFactory {
+    Bank createBank();
+    Loan createLoan();
+}
+
+// Concrete Factory for Home Loan
+class HomeLoanFactory implements AbstractLoanFactory {
+    @Override
+    public Bank createBank() {
+        return new SBI(); // Can be replaced with ICICI or Kotak as needed
+    }
+
+    @Override
+    public Loan createLoan() {
+        return new HomeLoan();
+    }
+}
+
+// Concrete Factory for Education Loan
+class EducationLoanFactory implements AbstractLoanFactory {
+    @Override
+    public Bank createBank() {
+        return new ICICI(); // Can be replaced with SBI or Kotak as needed
+    }
+
+    @Override
+    public Loan createLoan() {
+        return new EducationLoan();
+    }
+}
+
+// Client code
+public class AbstractFactoryPatternExample {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Accept user input for loan type
+        System.out.println("Select loan type: ");
+        System.out.println("1. Home Loan");
+        System.out.println("2. Education Loan");
+        int loanTypeChoice = scanner.nextInt();
+
+        AbstractLoanFactory loanFactory;
+        if (loanTypeChoice == 1) {
+            loanFactory = new HomeLoanFactory();
+        } else if (loanTypeChoice == 2) {
+            loanFactory = new EducationLoanFactory();
+        } else {
+            System.out.println("Invalid choice. Exiting program.");
+            return;
+        }
+
+        // Create Bank and Loan objects based on user selection
+        Bank bank = loanFactory.createBank();
+
+        // Accept user input for bank type
+        System.out.println("Select bank type: ");
+        System.out.println("1. SBI");
+        System.out.println("2. ICICI");
+        System.out.println("3. Kotak");
+        int bankTypeChoice = scanner.nextInt();
+
+        switch (bankTypeChoice) {
+            case 1:
+                bank = new SBI();
+                break;
+            case 2:
+                bank = new ICICI();
+                break;
+            case 3:
+                bank = new Kotak();
+                break;
+            default:
+                System.out.println("Invalid choice. Using default bank.");
+        }
+
+        Loan loan = loanFactory.createLoan();
+
+        // Accept additional input from the user
+        System.out.print("Enter the loan amount: ");
+        double loanAmount = scanner.nextDouble();
+
+        System.out.print("Enter the interest rate (in percentage): ");
+        double interestRate = scanner.nextDouble();
+
+        System.out.print("Enter the number of years to repay: ");
+        int yearsToRepay = scanner.nextInt();
+
+        // Calculate EMI and display the results
+        double emi = loan.calculateEMI(loanAmount, interestRate, yearsToRepay);
+        System.out.println("\nLoan details:");
+        System.out.println("Bank: " + bank.getBankName());
+        System.out.println("Loan Type: " + loan.getLoanType());
+        System.out.println("Loan Amount: $" + loanAmount);
+        System.out.println("Interest Rate: " + interestRate + "%");
+        System.out.println("Number of Years to Repay: " + yearsToRepay);
+        System.out.println("EMI (Equated Monthly Installment): $" + emi);
+
+        scanner.close();
+    }
+}
+
+
+
+
+
+Q.2 Write a python program to Implement Naïve Bayes for classification. Use titanic.csv/spam.csv dataset.
+import pandas as pd
+df = pd.read_csv("./csv/titanic.csv")
+df.head()
+df.drop(['PassengerId','Name','SibSp','Parch','Ticket','Cabin','Embarked'],axis='columns',inplace=True)
+df.head()
+inputs = df.drop('Survived',axis='columns')
+target = df.Survived
+dummies = pd.get_dummies(inputs.Sex)
+print(dummies.head(3))
+inputs = pd.concat([inputs,dummies],axis='columns')
+inputs.head(3)
+inputs.drop(['Sex','male'],axis='columns',inplace=True)
+inputs.head(3)
+inputs.columns[inputs.isna().any()]
+inputs.Age[:10]
+inputs.Age = inputs.Age.fillna(inputs.Age.mean())
+inputs.head()
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(inputs,target,test_size=0.3)
+from sklearn.naive_bayes import GaussianNB
+model = GaussianNB()
+model.fit(X_train,y_train)
+model.score(X_test,y_test)
+X_test[0:10]
+y_test[0:10]
+print(model.predict(X_test[0:10]))
+print(model.predict_proba(X_test[:10]))
+from sklearn.model_selection import cross_val_score
+print(cross_val_score(GaussianNB(),X_train, y_train, cv=5))
+
+
+
+
+
+
+
+
+
+
+
+
+
+Q.3 Print below array elements using map: const weekDays = [“Monday”, “Tuesday”, “Wednesday”, “Thursday”, “Friday”, “Saturday”, “Sunday”]
+Paste WeekDaysList.jsx file in src folder
+import React from 'react';
+
+const WeekDaysList = () => {
+  const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+  return (
+    <div>
+      <h1>Week Days</h1>
+      <ul>
+        {weekDays.map((day, index) => (
+          <li key={index}>{day}</li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default WeekDaysList;
+
+
+
+
+
+*********************************************************************************************
+*********************************************************************************************
+
+
+
+
+SLIP 12
+
+Q.1 Write a Java Program to implement Factory method for Pizza Store with createPizza(), orederPizza(), prepare(), Bake(), cut(), box(). Use this to create variety of pizza’s like NyStyleCheesePizza, ChicagoStyleCheesePizza etc.
+import java.util.Scanner;
+
+abstract class Pizza {
+    String name;
+    String size; 
+
+    void prepare() {
+        System.out.println("Preparing " + size + " " + name + " pizza");
+    }
+
+    void bake() {
+        System.out.println("Baking " + size + " " + name + " pizza");
+    }
+
+    void cut() {
+        System.out.println("Cutting " + size + " " + name + " pizza");
+    }
+
+    void box() {
+        System.out.println("Boxing " + size + " " + name + " pizza");
+    }
+}
+
+class NyStyleCheesePizza extends Pizza {
+    NyStyleCheesePizza(String size) {
+        name = "NY Style Cheese";
+        this.size = size;
+    }
+}
+
+class ChicagoStyleCheesePizza extends Pizza {
+    ChicagoStyleCheesePizza(String size) {
+        name = "Chicago Style Cheese";
+        this.size = size;
+    }
+}
+
+// PizzaStore with Factory Method
+abstract class PizzaStore {
+    abstract Pizza createPizza(String type, String size); 
+
+    Pizza orderPizza(String type, String size) { 
+        Pizza pizza = createPizza(type, size);
+
+        if (pizza != null) {
+            pizza.prepare();
+            pizza.bake();
+            pizza.cut();
+            pizza.box();
+            return pizza;
+        } else {
+            System.out.println("Sorry, we don't have that pizza type.");
+            return null;
+        }
+    }
+}
+
+class NyPizzaStore extends PizzaStore {
+    Pizza createPizza(String type, String size) { 
+        if (type.equals("cheese")) {
+            return new NyStyleCheesePizza(size);
+        }
+        return null;
+    }
+}
+
+class ChicagoPizzaStore extends PizzaStore {
+    Pizza createPizza(String type, String size) { 
+        if (type.equals("cheese")) {
+            return new ChicagoStyleCheesePizza(size);
+        }
+        return null;
+    }
+}
+
+public class PizzaMain {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Welcome to the Pizza Store!");
+        System.out.println("Select a store (1 for NY Pizza Store, 2 for Chicago Pizza Store):");
+        int storeChoice = scanner.nextInt();
+
+        PizzaStore pizzaStore;
+
+        if (storeChoice == 1) {
+            pizzaStore = new NyPizzaStore();
+        } else if (storeChoice == 2) {
+            pizzaStore = new ChicagoPizzaStore();
+        } else {
+            System.out.println("Invalid choice. Exiting.");
+            return;
+        }
+
+        while (true) {
+            System.out.println("Menu:");
+            System.out.println("1. Pizza");
+            System.out.println("2. Exit");
+            System.out.print("Enter your choice: ");
+            int choice = scanner.nextInt();
+
+            if (choice == 1) {
+                System.out.print("Enter pizza size (small, medium, large): ");
+                String size = scanner.next().toLowerCase();
+                System.out.print("Enter pizza type (cheese): ");
+                String pizzaType = scanner.next().toLowerCase();
+                Pizza pizza = pizzaStore.orderPizza(pizzaType, size);
+                if (pizza != null) {
+                    System.out.println("You ordered a " + pizza.size + " " + pizza.name + " pizza");
+                }
+            } else if (choice == 2) {
+                break;
+            } else {
+                System.out.println("Invalid choice. Please try again.");
+            }
+        }
+
+        scanner.close();
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+Q.2 Write a python program to implement k-means algorithm. Use income.csv dataset.
+import pandas as pd
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+data = pd.read_csv('./csv/income.csv')
+features = data[['Income($)', 'Age']]
+k = 3
+kmeans = KMeans(n_clusters=k)
+kmeans.fit(features)
+labels = kmeans.labels_
+data['Cluster'] = labels
+print(data)
+plt.scatter(data['Income($)'], data['Age'], c=labels, cmap='rainbow')
+plt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1], s=300, c='red', marker='X', label='Centroids')
+plt.title('K-Means Clustering')
+plt.xlabel('Income')
+plt.ylabel('Age')
+plt.legend()
+plt.show()
+
+Q.3 Print below array elements using map: const weekDays = [“Monday”, “Tuesday”, “Wednesday”, “Thursday”, “Friday”, “Saturday”, “Sunday”]
+Paste WeekDaysList.jsx file in src folder
+import React from 'react';
+
+const WeekDaysList = () => {
+  const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+  return (
+    <div>
+
+      <h1>Week Days</h1>
+      <ul>
+        {weekDays.map((day, index) => (
+          <li key={index}>{day}</li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default WeekDaysList;
+
+
+
+
+*********************************************************************************************
+*********************************************************************************************
+
+SLIP 13
+
+Q.1 Write a Java Program to implement I/O Decorator for converting uppercase letters to lower case letters.
+import java.io.*;
+
+class LowercaseInputStream extends FilterInputStream {
+    public LowercaseInputStream(InputStream in) {
+        super(in);
+    }
+
+    @Override
+    public int read() throws IOException {
+        int c = super.read();
+        return (c == -1 ? c : Character.toLowerCase((char) c));
+    }
+
+    @Override
+    public int read(byte[] b, int offset, int len) throws IOException {
+        int result = super.read(b, offset, len);
+        for (int i = offset; i < offset + result; i++) {
+            b[i] = (byte) Character.toLowerCase((char) b[i]);
+        }
+        return result;
+    }
+}
+
+public class IODecoratorExample {
+    public static void main(String[] args) {
+        try {
+            // Taking input from the user
+            System.out.print("Enter text: ");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            String userInput = reader.readLine();
+
+            // Creating the decorator
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(userInput.getBytes());
+            LowercaseInputStream lowercaseInputStream = new LowercaseInputStream(inputStream);
+
+            // Reading and displaying the input in lowercase
+            System.out.println("Output in lowercase:");
+            int data;
+            while ((data = lowercaseInputStream.read()) != -1) {
+                System.out.print((char) data);
+            }
+
+            // Closing the streams
+            reader.close();
+            lowercaseInputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+Q.2 Write a python program to implement Agglomerative clustering on a income.csv dataset.
+
+import pandas as pd
+from sklearn.cluster import AgglomerativeClustering
+import matplotlib.pyplot as plt
+from scipy.cluster.hierarchy import dendrogram, linkage
+data = pd.read_csv('./csv/income.csv')
+features = data[['Income($)', 'Age']]
+n_clusters = 3
+agg_cluster = AgglomerativeClustering(n_clusters=n_clusters, linkage='ward')
+agg_cluster.fit(features)
+data['Cluster'] = agg_cluster.labels_
+print(data)
+linked = linkage(features, 'ward')
+dendrogram(linked, orientation='top', distance_sort='descending', show_leaf_counts=True)
+plt.title('Hierarchical Clustering Dendrogram')
+plt.xlabel('Sample Index')
+plt.ylabel('Cluster Distance')
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+Q.3 Create a basic todo list application: (use useReducer() ) a. Build a component for adding, displaying, and deleting tasks. b. Use state to manage the list of tasks. c. Add a form for users to input new tasks. d. Display the list of tasks and provide a button to remove them. e. Add a counter for the total number of tasks.
+Paste below file in src as TodoApp.jsx
+
+import React, { useState, useReducer } from 'react';
+
+// Action types
+const ADD_TASK = 'ADD_TASK';
+const REMOVE_TASK = 'REMOVE_TASK';
+const TOGGLE_COMPLETE = 'TOGGLE_COMPLETE';
+
+// Reducer function
+const todoReducer = (state, action) => {
+  switch (action.type) {
+    case ADD_TASK:
+      return [...state, { text: action.payload, completed: false }];
+    case REMOVE_TASK:
+      const updatedTasks = [...state];
+      updatedTasks.splice(action.payload, 1);
+      return updatedTasks;
+    case TOGGLE_COMPLETE:
+      return state.map((task, index) =>
+        index === action.payload ? { ...task, completed: !task.completed } : task
+      );
+    default:
+      return state;
+  }
+};
+
+const TodoApp = () => {
+  // State and dispatch using useReducer
+  const [tasks, dispatch] = useReducer(todoReducer, []);
+  
+  // State to manage the input value for new tasks
+  const [newTask, setNewTask] = useState('');
+
+  // Function to handle adding a new task
+  const addTask = () => {
+    if (newTask.trim() !== '') {
+      dispatch({ type: ADD_TASK, payload: newTask });
+      setNewTask('');
+    }
+  };
+
+  // Function to handle removing a task
+  const removeTask = (index) => {
+    dispatch({ type: REMOVE_TASK, payload: index });
+  };
+
+  // Function to handle toggling the completion status of a task
+  const toggleComplete = (index) => {
+    dispatch({ type: TOGGLE_COMPLETE, payload: index });
+  };
+
+  // Function to handle adding a new task when "Enter" key is pressed
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      addTask();
+    }
+  };
+
+  return (
+    <div>
+      <h1>Todo List</h1>
+      
+      {/* Form to input new tasks */}
+      <div>
+        <input 
+          type="text" 
+          value={newTask} 
+          onChange={(e) => setNewTask(e.target.value)} 
+          onKeyPress={handleKeyPress} 
+          placeholder="Enter a new task" 
+        />
+        <button onClick={addTask}>Add Task</button>
+      </div>
+
+      {/* Display the list of tasks */}
+      <ul>
+        {tasks.map((task, index) => (
+          <li 
+            key={index} 
+            style={{ textDecoration: task.completed ? 'line-through' : 'none' }}
+            onClick={() => toggleComplete(index)}
+          >
+            {task.text}
+            <button onClick={(e) => { e.stopPropagation(); removeTask(index); }}>
+              <span role="img" aria-label="trash">???</span>
+            </button>
+          </li>
+        ))}
+      </ul>
+
+      {/* Display the total number of tasks */}
+      <p>Total Tasks: {tasks.length}</p>
+    </div>
+  );
+};
+
+export default TodoApp;
+
+
+
+
+
+*********************************************************************************************
+*********************************************************************************************
+
+
+
+
+
+
+SLIP 14
+Q.1 Write a Java program to implement Adapter pattern to design Heart Model to Beat Model.
+// Target interface
+interface Heart {
+    void beat();
+}
+// Adaptee interface
+interface BeatModel {
+    void pulse();
+}
+
+// Adaptee class
+class SimpleBeatModel implements BeatModel {
+    @Override
+    public void pulse() {
+        System.out.println("Heart is pulsing...");
+    }
+}
+
+// Adapter class
+class BeatModelAdapter implements Heart {
+    private BeatModel beatModel;
+
+    public BeatModelAdapter(BeatModel beatModel) {
+        this.beatModel = beatModel;
+    }
+
+    @Override
+    public void beat() {
+        beatModel.pulse();
+    }
+}
+// Client code
+public class AdapterPatternExample {
+    public static void main(String[] args) {
+        // Create an instance of the Adaptee (BeatModel)
+        BeatModel beatModel = new SimpleBeatModel();
+
+        // Create an instance of the Adapter, passing the Adaptee to it
+        Heart heart = new BeatModelAdapter(beatModel);
+
+        // Use the Adapter to call the target method
+        heart.beat();
+    }
+}
+
+Q.2 Write a python program to implement k-means algorithm on a synthetic dataset 
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import make_blobs
+from sklearn.cluster import KMeans
+n_samples = 300
+n_features = 2
+n_clusters = 3
+X, _ = make_blobs(n_samples=n_samples, n_features=n_features, centers=n_clusters, random_state=42)
+kmeans = KMeans(n_clusters=n_clusters)
+print(kmeans.fit(X))
+cluster_centers = kmeans.cluster_centers_
+labels = kmeans.labels_
+plt.scatter(X[:, 0], X[:, 1], c=labels, cmap='viridis')
+plt.scatter(cluster_centers[:, 0], cluster_centers[:, 1], marker='x', c='red', s=100, label='Cluster Centers')
+plt.legend()
+plt.title('K-Means Clustering')
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Q.3 Design login form which accepts username and password (Two text boxes) and submit button. a. On submit button click, it should validate username and password and console log if its valid b. Validity check should be simple like username: Admin & password: Pass123 c. If any other credentials it should say unauthorized
+Paste LoginForm.jsx file in src folder
+
+import React, { useState } from 'react';
+
+const LoginForm = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = () => {
+    // Simple validation for username and password
+    if (username === 'Admin' && password === 'Pass123') {
+      console.log('Login successful!');
+    } else {
+      console.log('Unauthorized. Please check your credentials.');
+    }
+  };
+
+  return (
+    <div>
+
+      <h1>Login Form</h1>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleLogin();
+        }}
+      >
+        <label>
+          Username:
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+        </label>
+        <br />
+        <label>
+          Password:
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </label>
+        <br />
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  );
+};
+
+export default LoginForm;
+
+
+
+
+
+
+
+
+
+*********************************************************************************************
+*********************************************************************************************
+
+
+SLIP 15
+
+Q.1 Write a Java Program to implement Iterator Pattern for Designing Menu like Breakfast, Lunch or Dinner Menu.
+//QUESTION 9
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Scanner;
+
+// Define MenuItem class to represent menu items
+class MenuItem {
+    private String name;
+    private double price;
+
+    public MenuItem(String name, double price) {
+        this.name = name;
+        this.price = price;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+}
+
+// Define a Menu interface with an iterator method
+interface Menu {
+    Iterator<MenuItem> createIterator();
+}
+
+// Implement BreakfastMenu class
+class BreakfastMenu implements Menu {
+    private ArrayList<MenuItem> items;
+
+    public BreakfastMenu() {
+        items = new ArrayList<>();
+        addItem("Pancakes", 40);
+        addItem("Omelette", 50);
+    }
+
+    public void addItem(String name, double price) {
+        MenuItem menuItem = new MenuItem(name, price);
+        items.add(menuItem);
+    }
+
+    public Iterator<MenuItem> createIterator() {
+        return items.iterator();
+    }
+}
+
+// Implement LunchMenu class (similar to BreakfastMenu)
+class LunchMenu implements Menu {
+    private ArrayList<MenuItem> items;
+
+    public LunchMenu() {
+        items = new ArrayList<>();
+        addItem("Burger", 90);
+        addItem("Salad", 60);
+    }
+
+    public void addItem(String name, double price) {
+        MenuItem menuItem = new MenuItem(name, price);
+        items.add(menuItem);
+    }
+
+    public Iterator<MenuItem> createIterator() {
+        return items.iterator();
+    }
+}
+
+// Implement DinnerMenu class (similar to BreakfastMenu)
+class DinnerMenu implements Menu {
+    private ArrayList<MenuItem> items;
+
+    public DinnerMenu() {
+        items = new ArrayList<>();
+        addItem("Steak", 150);
+        addItem("Fish", 120);
+    }
+
+    public void addItem(String name, double price) {
+        MenuItem menuItem = new MenuItem(name, price);
+        items.add(menuItem);
+    }
+
+    public Iterator<MenuItem> createIterator() {
+        return items.iterator();
+    }
+}
+
+// Define a Waitress class to interact with menus
+class Waitress {
+    private Menu menu;
+
+    public Waitress(Menu menu) {
+        this.menu = menu;
+    }
+
+    public void printMenu() {
+        Iterator<MenuItem> iterator = menu.createIterator();
+        while (iterator.hasNext()) {
+            MenuItem menuItem = iterator.next();
+            System.out.println(menuItem.getName() + ": Rs." + menuItem.getPrice());
+        }
+    }
+
+    public void takeOrder() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Please enter the item you'd like to order: ");
+        String order = scanner.nextLine();
+        System.out.println("You ordered: " + order);
+    }
+}
+
+public class Break {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Select a menu: ");
+        System.out.println("1. Breakfast");
+        System.out.println("2. Lunch");
+        System.out.println("3. Dinner");
+        int userChoice = scanner.nextInt();
+
+        Menu selectedMenu = null;
+
+        switch (userChoice) {
+            case 1:
+                selectedMenu = new BreakfastMenu();
+                break;
+            case 2:
+                selectedMenu = new LunchMenu();
+                break;
+            case 3:
+                selectedMenu = new DinnerMenu();
+                break;
+            default:
+                System.out.println("Invalid choice");
+                return;
+        }
+
+        Waitress waitress = new Waitress(selectedMenu);
+        waitress.printMenu();
+        waitress.takeOrder();
+
+        System.out.println("Enjoy your meal !");
+    }
+}
+
+Q.2 Write a python program to Implement Naïve Bayes for classification. Use titanic.csv/spam.csv dataset.
+import pandas as pd
+df = pd.read_csv("./csv/titanic.csv")
+df.head()
+df.drop(['PassengerId','Name','SibSp','Parch','Ticket','Cabin','Embarked'],axis='columns',inplace=True)
+df.head()
+inputs = df.drop('Survived',axis='columns')
+target = df.Survived
+dummies = pd.get_dummies(inputs.Sex)
+print(dummies.head(3))
+inputs = pd.concat([inputs,dummies],axis='columns')
+inputs.head(3)
+inputs.drop(['Sex','male'],axis='columns',inplace=True)
+inputs.head(3)
+inputs.columns[inputs.isna().any()]
+inputs.Age[:10]
+inputs.Age = inputs.Age.fillna(inputs.Age.mean())
+inputs.head()
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(inputs,target,test_size=0.3)
+from sklearn.naive_bayes import GaussianNB
+model = GaussianNB()
+model.fit(X_train,y_train)
+model.score(X_test,y_test)
+X_test[0:10]
+y_test[0:10]
+print(model.predict(X_test[0:10]))
+print(model.predict_proba(X_test[:10]))
+from sklearn.model_selection import cross_val_score
+print(cross_val_score(GaussianNB(),X_train, y_train, cv=5))
+
+
+
+
+
+
+
+
+
+Q.3 Create two components – ParentComponent, ChildComponent a. ParentComponent passes prop as name to ChildComponent b. ChildComponent converts name to uppercase and prints e.g ParentComponent passes John c. ChildComponent prints My name is JOHN
+Create A Folder Named “components” In src folder and inside components. Create two folders named “ParentComponent” And “ChildComponent”
+Paste ParentComponent.jsx in ParentComponent Folder
+// ParentComponent.jsx
+import React from 'react';
+import ChildComponent from '../ChildComponent/ChildComponent';
+
+const ParentComponent = () => {
+  const name = 'John'; // You can change this value
+
+  return (
+    <div>
+      {/* <h1>Parent Component</h1> */}
+      <ChildComponent name={name} />
+    </div>
+  );
+};
+
+export default ParentComponent;
+
+
+paste ChildComponent.jsx in ChildComponent folder
+
+// ChildComponent.jsx
+import React from 'react';
+
+const ChildComponent = (props) => {
+  const uppercaseName = props.name.toUpperCase();
+
+  return (
+    <div>
+      {/* <h2>Child Component</h2> */}
+      <p>My name is {uppercaseName}</p>
+    </div>
+  );
+};
+
+export default ChildComponent;
+
+
+
+And Paste App.js In Src Folder
+// App.js
+import React from 'react';
+import ParentComponent from './components/ParentComponent/ParentComponent';
+
+function App() {
+  return (
+    <div className="App">
+      <h1>Slip</h1>
+      <ParentComponent />
+    </div>
+  );
+}
+
+export default App;
+
+
+
+
+
+*********************************************************************************************
+*********************************************************************************************
+
+
+
+SLIP 16
+
+Q.1 Write a Java Program to implement Adapter pattern for Enumeration iterator.
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.StringTokenizer;
+
+// Adapter class to adapt Enumeration to Iterator
+class EnumerationIteratorAdapter<T> implements Iterator<T> {
+    private Enumeration<T> enumeration;
+
+    public EnumerationIteratorAdapter(Enumeration<T> enumeration) {
+        this.enumeration = enumeration;
+    }
+
+    @Override
+    public boolean hasNext() {
+        return enumeration.hasMoreElements();
+    }
+
+    @Override
+    public T next() {
+        return enumeration.nextElement();
+    }
+
+    @Override
+    public void remove() {
+        throw new UnsupportedOperationException("remove() method is not supported.");
+    }
+}
+
+// Adapter class to adapt StringTokenizer to Enumeration
+class StringTokenizerEnumerationAdapter implements Enumeration<String> {
+    private StringTokenizer tokenizer;
+
+    public StringTokenizerEnumerationAdapter(StringTokenizer tokenizer) {
+        this.tokenizer = tokenizer;
+    }
+
+    @Override
+    public boolean hasMoreElements() {
+        return tokenizer.hasMoreTokens();
+    }
+
+    @Override
+    public String nextElement() {
+        return tokenizer.nextToken();
+    }
+}
+
+public class AdapterPatternDemo {
+    public static void main(String[] args) {
+        // Create a StringTokenizer (source)
+        StringTokenizer tokenizer = new StringTokenizer("One Two Three Four", " ");
+
+        // Adapt the StringTokenizer to Enumeration using the adapter
+        Enumeration<String> enumeration = new StringTokenizerEnumerationAdapter(tokenizer);
+
+        // Adapt the Enumeration to Iterator using the adapter
+        Iterator<String> iterator = new EnumerationIteratorAdapter<>(enumeration);
+
+        // Use the Iterator interface to iterate through elements
+        while (iterator.hasNext()) {
+            System.out.println(iterator.next());
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Q.2 Write a python program to implement k-nearest Neighbors algorithm to build a prediction model. Use Iris Dataset.
+import pandas as pd
+from sklearn.datasets import load_iris
+iris = load_iris()
+iris.feature_names
+iris.target_names
+df = pd.DataFrame(iris.data,columns=iris.feature_names)
+df.head()
+df['target'] = iris.target
+df.head()
+df[df.target==1].head()
+df[df.target==2].head()
+df['flower_name'] =df.target.apply(lambda x: iris.target_names[x])
+df.head()
+df[45:55]
+df0 = df[:50]
+df1 = df[50:100]
+df2 = df[100:]
+import matplotlib.pyplot as plt
+plt.xlabel('Sepal Length')
+plt.ylabel('Sepal Width')
+plt.scatter(df0['sepal length (cm)'], df0['sepal width (cm)'],color="green",marker='+')
+plt.scatter(df1['sepal length (cm)'], df1['sepal width (cm)'],color="blue",marker='.')
+plt.xlabel('Petal Length')
+plt.ylabel('Petal Width')
+plt.scatter(df0['petal length (cm)'], df0['petal width (cm)'],color="green",marker='+')
+plt.scatter(df1['petal length (cm)'], df1['petal width (cm)'],color="blue",marker='.')
+from sklearn.model_selection import train_test_split
+X = df.drop(['target','flower_name'], axis='columns')
+y = df.target
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
+len(X_train)
+len(X_test)
+from sklearn.neighbors import KNeighborsClassifier
+knn = KNeighborsClassifier(n_neighbors=10)
+knn.fit(X_train,y_train)
+print(knn.score(X_test, y_test))
+print(knn.predict([[4.8,3.0,1.5,0.3]]))
+from sklearn.metrics import confusion_matrix
+y_pred = knn.predict(X_test)
+cm = confusion_matrix(y_test, y_pred)
+print(cm)
+import matplotlib.pyplot as plt
+import seaborn as sn
+plt.figure(figsize=(7,5))
+sn.heatmap(cm, annot=True)
+plt.xlabel('Predicted')
+plt.ylabel('Truth')
+plt.show()
+from sklearn.metrics import classification_report
+print(classification_report(y_test, y_pred))
+
+
+
+
+Q.3 Design login form which accepts username and password (Two text boxes) and submit button. a. On submit button click, it should validate username and password and console log if its valid b. Validity check should be simple like username: Admin & password: Pass123 c. If any other credentials it should say unauthorized
+Paste LoginForm.jsx file in src folder
+
+import React, { useState } from 'react';
+
+const LoginForm = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = () => {
+    // Simple validation for username and password
+    if (username === 'Admin' && password === 'Pass123') {
+      console.log('Login successful!');
+    } else {
+      console.log('Unauthorized. Please check your credentials.');
+    }
+  };
+
+  return (
+    <div>
+      <h1>Login Form</h1>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleLogin();
+        }}
+      >
+        <label>
+          Username:
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+        </label>
+        <br />
+        <label>
+          Password:
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </label>
+        <br />
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  );
+};
+
+export default LoginForm;
+
+
+
+*********************************************************************************************
+*********************************************************************************************
+
+
+
+SLIP 17
+
+Q.1 Write a Java Program to implement Strategy Design pattern for arithmetic operations.
+import java.util.Scanner;
+// Strategy interface
+interface ArithmeticOperation {
+    int performOperation(int num1, int num2);
+}
+
+// Concrete strategy classes
+class AddOperation implements ArithmeticOperation {
+    @Override
+    public int performOperation(int num1, int num2) {
+        return num1 + num2;
+    }
+}
+
+class SubtractOperation implements ArithmeticOperation {
+    @Override
+    public int performOperation(int num1, int num2) {
+        return num1 - num2;
+    }
+}
+
+class MultiplyOperation implements ArithmeticOperation {
+    @Override
+    public int performOperation(int num1, int num2) {
+        return num1 * num2;
+    }
+}
+
+class DivideOperation implements ArithmeticOperation {
+    @Override
+    public int performOperation(int num1, int num2) {
+        if (num2 != 0) {
+            return num1 / num2;
+        } else {
+            System.out.println("Cannot divide by zero.");
+            return 0;
+        }
+    }
+}
+// Context class
+class Calculator {
+    private ArithmeticOperation arithmeticOperation;
+
+    public Calculator(ArithmeticOperation arithmeticOperation) {
+        this.arithmeticOperation = arithmeticOperation;
+    }
+
+    public void setArithmeticOperation(ArithmeticOperation arithmeticOperation) {
+        this.arithmeticOperation = arithmeticOperation;
+    }
+
+    public int executeOperation(int num1, int num2) {
+        return arithmeticOperation.performOperation(num1, num2);
+    }
+}
+
+// Client code
+public class StrategyPatternExample {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Accept values from the user
+        System.out.print("Enter the first number: ");
+        int num1 = scanner.nextInt();
+
+        System.out.print("Enter the second number: ");
+        int num2 = scanner.nextInt();
+
+        // Create context with initial strategy (AddOperation)
+        Calculator calculator = new Calculator(new AddOperation());
+
+        // Perform arithmetic operations
+        int resultAdd = calculator.executeOperation(num1, num2);
+        System.out.println("Addition result: " + resultAdd);
+
+        calculator.setArithmeticOperation(new SubtractOperation());
+        int resultSubtract = calculator.executeOperation(num1, num2);
+        System.out.println("Subtraction result: " + resultSubtract);
+
+        calculator.setArithmeticOperation(new MultiplyOperation());
+        int resultMultiply = calculator.executeOperation(num1, num2);
+        System.out.println("Multiplication result: " + resultMultiply);
+
+        calculator.setArithmeticOperation(new DivideOperation());
+        int resultDivide = calculator.executeOperation(num1, num2);
+        System.out.println("Division result: " + resultDivide);
+
+        scanner.close();
+    }
+}
+
+
+Q.2 Write a python program to implement linear SVM for Classification. Use iris.csv.
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.svm import LinearSVC
+from sklearn.metrics import accuracy_score, classification_report
+from sklearn.preprocessing import StandardScaler
+data = pd.read_csv('./csv/Iris.csv')
+X = data.iloc[:, :-1]  # Features
+y = data.iloc[:, -1]   # Target
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+svm_classifier = LinearSVC()
+svm_classifier.fit(X_train_scaled, y_train)
+predictions = svm_classifier.predict(X_test_scaled)
+accuracy = accuracy_score(y_test, predictions)
+report = classification_report(y_test, predictions)
+print(f"Accuracy: {accuracy}")
+print("Classification Report:\n", report)
+
+
+
+
+
+
+
+Q.3 Create two components – ParentComponent, ChildComponent a. ParentComponent passes prop as name to ChildComponent b. ChildComponent converts name to uppercase and prints e.g ParentComponent passes John c. ChildComponent prints My name is JOHN
+Create A Folder Named “components” In src folder and inside components. Create two folders named “ParentComponent” And “ChildComponent”
+Paste ParentComponent.jsx in ParentComponent Folder
+// ParentComponent.jsx
+import React from 'react';
+import ChildComponent from '../ChildComponent/ChildComponent';
+
+const ParentComponent = () => {
+  const name = 'John'; // You can change this value
+
+  return (
+    <div>
+      {/* <h1>Parent Component</h1> */}
+      <ChildComponent name={name} />
+    </div>
+  );
+};
+
+export default ParentComponent;
+
+
+paste ChildComponent.jsx in ChildComponent folder
+
+// ChildComponent.jsx
+import React from 'react';
+
+const ChildComponent = (props) => {
+  const uppercaseName = props.name.toUpperCase();
+
+  return (
+    <div>
+      {/* <h2>Child Component</h2> */}
+      <p>My name is {uppercaseName}</p>
+    </div>
+  );
+};
+
+export default ChildComponent;
+
+
+
+And Paste App.js In Src Folder
+// App.js
+import React from 'react';
+import ParentComponent from './components/ParentComponent/ParentComponent';
+
+function App() {
+  return (
+    <div className="App">
+      <h1>Slip 6</h1>
+      <ParentComponent />
+    </div>
+  );
+}
+
+export default App;
+
+
+
+
+
+*********************************************************************************************
+*********************************************************************************************
+
+
+
+
+
+
+
+SLIP 18
+
+Q.1 Write a Java Program to implement Abstract Factory Pattern for Bank and Loan.
+import java.util.Scanner;
+
+// Abstract Bank class
+interface Bank {
+    String getBankName();
+}
+
+// Concrete Bank classes
+class SBI implements Bank {
+    @Override
+    public String getBankName() {
+        return "SBI Bank";
+    }
+}
+
+class ICICI implements Bank {
+    @Override
+    public String getBankName() {
+        return "ICICI Bank";
+    }
+}
+
+class Kotak implements Bank {
+    @Override
+    public String getBankName() {
+        return "KOTAK Bank";
+    }
+}
+
+// Abstract Loan class
+abstract class Loan {
+    abstract String getLoanType();
+    abstract double calculateEMI(double loanAmount, double interestRate, int yearsToRepay);
+}
+
+// Concrete Loan classes
+class HomeLoan extends Loan {
+    @Override
+    String getLoanType() {
+        return "Home Loan";
+    }
+
+    @Override
+    double calculateEMI(double loanAmount, double interestRate, int yearsToRepay) {
+        // Formula for EMI calculation: EMI = [P * r * (1 + r)^n] / [(1 + r)^n - 1]
+        double r = interestRate / 1200; // Monthly interest rate
+        int n = yearsToRepay * 12; // Total number of payments
+
+        double emi = (loanAmount * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+        return emi;
+    }
+}
+
+class EducationLoan extends Loan {
+    @Override
+    String getLoanType() {
+        return "Education Loan";
+    }
+
+    @Override
+    double calculateEMI(double loanAmount, double interestRate, int yearsToRepay) {
+        // Formula for EMI calculation: EMI = [P * r * (1 + r)^n] / [(1 + r)^n - 1]
+        double r = interestRate / 1200; // Monthly interest rate
+        int n = yearsToRepay * 12; // Total number of payments
+
+        double emi = (loanAmount * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+        return emi;
+    }
+}
+
+// Abstract Factory interface
+interface AbstractLoanFactory {
+    Bank createBank();
+    Loan createLoan();
+}
+
+// Concrete Factory for Home Loan
+class HomeLoanFactory implements AbstractLoanFactory {
+    @Override
+    public Bank createBank() {
+        return new SBI(); // Can be replaced with ICICI or Kotak as needed
+    }
+
+    @Override
+    public Loan createLoan() {
+        return new HomeLoan();
+    }
+}
+
+// Concrete Factory for Education Loan
+class EducationLoanFactory implements AbstractLoanFactory {
+    @Override
+    public Bank createBank() {
+        return new ICICI(); // Can be replaced with SBI or Kotak as needed
+    }
+
+    @Override
+    public Loan createLoan() {
+        return new EducationLoan();
+    }
+}
+
+// Client code
+public class AbstractFactoryPatternExample {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Accept user input for loan type
+        System.out.println("Select loan type: ");
+        System.out.println("1. Home Loan");
+        System.out.println("2. Education Loan");
+        int loanTypeChoice = scanner.nextInt();
+
+        AbstractLoanFactory loanFactory;
+        if (loanTypeChoice == 1) {
+            loanFactory = new HomeLoanFactory();
+        } else if (loanTypeChoice == 2) {
+            loanFactory = new EducationLoanFactory();
+        } else {
+            System.out.println("Invalid choice. Exiting program.");
+            return;
+        }
+
+        // Create Bank and Loan objects based on user selection
+        Bank bank = loanFactory.createBank();
+
+        // Accept user input for bank type
+        System.out.println("Select bank type: ");
+        System.out.println("1. SBI");
+        System.out.println("2. ICICI");
+        System.out.println("3. Kotak");
+        int bankTypeChoice = scanner.nextInt();
+
+        switch (bankTypeChoice) {
+            case 1:
+                bank = new SBI();
+                break;
+            case 2:
+                bank = new ICICI();
+                break;
+            case 3:
+                bank = new Kotak();
+                break;
+            default:
+                System.out.println("Invalid choice. Using default bank.");
+        }
+
+        Loan loan = loanFactory.createLoan();
+
+        // Accept additional input from the user
+        System.out.print("Enter the loan amount: ");
+        double loanAmount = scanner.nextDouble();
+
+        System.out.print("Enter the interest rate (in percentage): ");
+        double interestRate = scanner.nextDouble();
+
+        System.out.print("Enter the number of years to repay: ");
+        int yearsToRepay = scanner.nextInt();
+
+        // Calculate EMI and display the results
+        double emi = loan.calculateEMI(loanAmount, interestRate, yearsToRepay);
+        System.out.println("\nLoan details:");
+        System.out.println("Bank: " + bank.getBankName());
+        System.out.println("Loan Type: " + loan.getLoanType());
+        System.out.println("Loan Amount: $" + loanAmount);
+        System.out.println("Interest Rate: " + interestRate + "%");
+        System.out.println("Number of Years to Repay: " + yearsToRepay);
+        System.out.println("EMI (Equated Monthly Installment): $" + emi);
+
+        scanner.close();
+    }
+}
+
+
+
+
+
+
+Q.2 Write a python program to implement linear SVM for Regression. Use position_sal.csv
+import pandas as pd
+from sklearn.svm import SVR
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import mean_squared_error
+import matplotlib.pyplot as plt
+data = pd.read_csv('./csv//position_sal.csv')
+X = data.iloc[:, 1:2].values  # Assuming the independent variable is in the second column
+y = data.iloc[:, -1].values   # Assuming the dependent variable (target) is in the last column
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+sc_X = StandardScaler()
+sc_y = StandardScaler()
+X_train = sc_X.fit_transform(X_train)
+X_test = sc_X.transform(X_test)
+y_train = sc_y.fit_transform(y_train.reshape(-1, 1)).ravel()
+svm_regressor = SVR(kernel='linear')
+svm_regressor.fit(X_train, y_train)
+y_pred = svm_regressor.predict(X_test)
+y_pred = y_pred.reshape(-1, 1)  # Reshape predictions to match the expected shape for inverse_transform
+y_pred = sc_y.inverse_transform(y_pred)  # Inverse transform predictions to original scale
+rmse = mean_squared_error(y_test, y_pred, squared=False)
+print("Root Mean Squared Error (RMSE):", rmse)
+plt.scatter(X_test, y_test, color='blue', label='Actual')
+plt.scatter(X_test, y_pred, color='red', label='Predicted')
+plt.title('Linear SVM Regression')
+plt.xlabel('Position Level')
+plt.ylabel('Salary')
+plt.legend()
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Q.3 Implement useEffect hook and print all three life cycle states a. e.g Inside mount b. e.g Inside update c. e.g Inside unmount
+Paste LifecycleExample.jsx in src folder
+After Running The React App On Port . Press Right Click On Web Page And Choose Inspect Option And Select The Console Tab To Show The Log .
+import React, { useState, useEffect } from 'react';
+
+const LifecycleExample = () => {
+  // Mounting
+  useEffect(() => {
+    console.log('Inside mount');
+    
+    // Cleanup function (will be called on unmount)
+    return () => {
+      console.log('Inside unmount');
+    };
+  }, []);
+
+  // Updating
+  useEffect(() => {
+    console.log('Inside update');
+
+    // Cleanup function (will be called on update and unmount)
+    return () => {
+      console.log('Inside unmount (from update)');
+    };
+  });
+
+  // State for updating
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <h1>Slip 7</h1>
+      <h2>Lifecycle Example</h2>
+      <p>Current Count: {count}</p>
+      <button onClick={() => setCount(count + 1)}>Increase Count</button>
+    </div>
+  );
+};
+
+export default LifecycleExample;
+
+
+
+*********************************************************************************************
+*********************************************************************************************
+
+
+SLIP 19
+
+
+Q.1 Write a Java Program to implement command pattern to test Remote Control
+// Command interface
+interface Command {
+    void execute();
+}
+
+// Concrete Command classes
+class LightOnCommand implements Command {
+    private Light light;
+
+    public LightOnCommand(Light light) {
+        this.light = light;
+    }
+
+    @Override
+    public void execute() {
+        light.turnOn();
+    }
+}
+
+class LightOffCommand implements Command {
+    private Light light;
+
+    public LightOffCommand(Light light) {
+        this.light = light;
+    }
+
+    @Override
+    public void execute() {
+        light.turnOff();
+    }
+}
+
+// Receiver class
+class Light {
+    public void turnOn() {
+        System.out.println("Light is ON");
+    }
+
+    public void turnOff() {
+        System.out.println("Light is OFF");
+    }
+}
+
+// Invoker class
+class RemoteControl {
+    private Command command;
+
+    public void setCommand(Command command) {
+        this.command = command;
+    }
+
+    public void pressButton() {
+        command.execute();
+    }
+}
+
+// Client
+public class RemoteControlTest {
+    public static void main(String[] args) {
+        // Creating instances
+        Light light = new Light();
+        Command lightOnCommand = new LightOnCommand(light);
+        Command lightOffCommand = new LightOffCommand(light);
+
+        RemoteControl remoteControl = new RemoteControl();
+
+        // Testing the remote control with the light
+        remoteControl.setCommand(lightOnCommand);
+        remoteControl.pressButton();
+
+        remoteControl.setCommand(lightOffCommand);
+        remoteControl.pressButton();
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+Q.2 Write a python program to Implement Decision Tree Model for classification. Use Decision_Tree_Dataset.csv.
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+data = pd.read_csv('./csv/Decision_Tree_Dataset.csv')
+X = data.drop('Target', axis=1)
+y = data['Target']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+clf = DecisionTreeClassifier()
+clf.fit(X_train, y_train)
+predictions = clf.predict(X_test)
+accuracy = accuracy_score(y_test, predictions)
+print("Accuracy:", accuracy)
+print("\nClassification Report:")
+print(classification_report(y_test, predictions))
+print("\nConfusion Matrix:")
+print(confusion_matrix(y_test, predictions))
+
+# program to make csv file
+# import pandas as pd
+# from sklearn.datasets import make_classification
+
+# # Create a synthetic dataset for Decision Tree
+# X, y = make_classification(
+#     n_samples=1000,        # Number of samples
+#     n_features=5,          # Number of features
+#     n_informative=3,       # Number of informative features
+#     n_redundant=2,         # Number of redundant features
+#     n_classes=2,           # Number of classes (binary classification)
+#     random_state=42        # Random state for reproducibility
+# )
+
+# # Create a DataFrame to hold the synthetic dataset
+# columns = [f"Feature_{i+1}" for i in range(X.shape[1])]
+# columns.append('Target')
+
+# decision_tree_data = pd.DataFrame(data=pd.concat([pd.DataFrame(X, columns=columns[:-1]), pd.DataFrame(y, columns=['Target'])], axis=1))
+
+# # Save the synthetic dataset to a CSV file
+# decision_tree_data.to_csv('./csv/Decision_Tree_Dataset.csv', index=False)
+
+
+
+
+
+
+
+
+Q.3 Implement useEffect hook and print all three life cycle states a. e.g Inside mount b. e.g Inside update c. e.g Inside unmount
+Paste LifecycleExample.jsx in src folder
+After Running The React App On Port . Press Right Click On Web Page And Choose Inspect Option And Select The Console Tab To Show The Log .
+import React, { useState, useEffect } from 'react';
+
+const LifecycleExample = () => {
+  // Mounting
+  useEffect(() => {
+    console.log('Inside mount');
+    
+    // Cleanup function (will be called on unmount)
+    return () => {
+      console.log('Inside unmount');
+    };
+  }, []);
+
+  // Updating
+  useEffect(() => {
+    console.log('Inside update');
+
+    // Cleanup function (will be called on update and unmount)
+    return () => {
+      console.log('Inside unmount (from update)');
+    };
+  });
+
+  // State for updating
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <h1>Slip 7</h1>
+      <h2>Lifecycle Example</h2>
+      <p>Current Count: {count}</p>
+      <button onClick={() => setCount(count + 1)}>Increase Count</button>
+    </div>
+  );
+};
+
+export default LifecycleExample;
+
+
+*********************************************************************************************
+*********************************************************************************************
+
+SLIP 20
+
+
+Q.1 Write a Java Program to implement Factory Design pattern for operating system example.
+// Product interface
+interface OperatingSystem {
+    void displayInfo();
+}
+
+// Concrete Products
+class Windows implements OperatingSystem {
+    @Override
+    public void displayInfo() {
+        System.out.println("This is Windows Operating System.");
+    }
+}
+
+class Linux implements OperatingSystem {
+    @Override
+    public void displayInfo() {
+        System.out.println("This is Linux Operating System.");
+    }
+}
+
+class MacOS implements OperatingSystem {
+    @Override
+    public void displayInfo() {
+        System.out.println("This is macOS Operating System.");
+    }
+}
+
+// Factory interface
+interface OperatingSystemFactory {
+    OperatingSystem createOperatingSystem();
+}
+
+// Concrete Factories
+class WindowsFactory implements OperatingSystemFactory {
+    @Override
+    public OperatingSystem createOperatingSystem() {
+        return new Windows();
+    }
+}
+
+class LinuxFactory implements OperatingSystemFactory {
+    @Override
+    public OperatingSystem createOperatingSystem() {
+        return new Linux();
+    }
+}
+
+class MacOSFactory implements OperatingSystemFactory {
+    @Override
+    public OperatingSystem createOperatingSystem() {
+        return new MacOS();
+    }
+}
+
+// Client class
+
+public class OperatingSystemClient {
+    public static void main(String[] args) {
+        // Using the Factory Design Pattern to create different operating systems
+        OperatingSystemFactory windowsFactory = new WindowsFactory();
+        OperatingSystem windowsOS = windowsFactory.createOperatingSystem();
+        windowsOS.displayInfo();
+
+        OperatingSystemFactory linuxFactory = new LinuxFactory();
+        OperatingSystem linuxOS = linuxFactory.createOperatingSystem();
+        linuxOS.displayInfo();
+
+        OperatingSystemFactory macosFactory = new MacOSFactory();
+        OperatingSystem macosOS = macosFactory.createOperatingSystem();
+        macosOS.displayInfo();
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+Q.2 Write a python program to implement Polynomial Regression for given dataset. Use position_sal.csv.
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+import matplotlib.pyplot as plt
+data = pd.read_csv('./csv/position_sal.csv')
+X = data[['Level']]
+y = data['Salary']
+poly_features = PolynomialFeatures(degree=4)  # You can adjust the degree as needed
+X_poly = poly_features.fit_transform(X)
+model = LinearRegression()
+model.fit(X_poly, y)
+y_pred = model.predict(X_poly)
+plt.scatter(X, y, color='blue', label='Actual Data')
+plt.plot(X, y_pred, color='red', label='Polynomial Regression')
+plt.xlabel('Position Level')
+plt.ylabel('Salary')
+plt.title('Polynomial Regression')
+plt.legend()
+plt.show()
+
+Q.3 Print below array elements using map: a. const fruits = ["apple", "banana", "cherry", “bat”] b. Only print fruits it should remove bat and print it
+Paste the FruitsList.jsx In src Folder
+import React from 'react';
+
+const FruitsList = () => {
+  const fruits = ["apple", "banana", "cherry", "bat"];
+
+  // Filter out "bat" from the fruits array
+  const filteredFruits = fruits.filter(fruit => fruit !== "bat");
+
+  return (
+    <div>
+      <h1>Fruits List</h1>
+      <ul>
+        {filteredFruits.map((fruit, index) => (
+          <li key={index}>{fruit}</li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default FruitsList;
+
+
+
+*********************************************************************************************
+*********************************************************************************************
+
+SLIP 21
+
+
+Q.1 Write a Java Program to implement Factory method for Pizza Store with createPizza(), orederPizza(), prepare(), Bake(), cut(), box(). Use this to create variety of pizza’s like NyStyleCheesePizza, ChicagoStyleCheesePizza etc.
+import java.util.Scanner;
+
+abstract class Pizza {
+    String name;
+    String size; 
+
+    void prepare() {
+        System.out.println("Preparing " + size + " " + name + " pizza");
+    }
+
+    void bake() {
+        System.out.println("Baking " + size + " " + name + " pizza");
+    }
+
+    void cut() {
+        System.out.println("Cutting " + size + " " + name + " pizza");
+    }
+
+    void box() {
+        System.out.println("Boxing " + size + " " + name + " pizza");
+    }
+}
+
+class NyStyleCheesePizza extends Pizza {
+    NyStyleCheesePizza(String size) {
+        name = "NY Style Cheese";
+        this.size = size;
+    }
+}
+
+class ChicagoStyleCheesePizza extends Pizza {
+    ChicagoStyleCheesePizza(String size) {
+        name = "Chicago Style Cheese";
+        this.size = size;
+    }
+}
+
+// PizzaStore with Factory Method
+abstract class PizzaStore {
+    abstract Pizza createPizza(String type, String size); 
+
+    Pizza orderPizza(String type, String size) { 
+        Pizza pizza = createPizza(type, size);
+
+        if (pizza != null) {
+            pizza.prepare();
+            pizza.bake();
+            pizza.cut();
+            pizza.box();
+            return pizza;
+        } else {
+            System.out.println("Sorry, we don't have that pizza type.");
+            return null;
+        }
+    }
+}
+
+class NyPizzaStore extends PizzaStore {
+    Pizza createPizza(String type, String size) { 
+        if (type.equals("cheese")) {
+            return new NyStyleCheesePizza(size);
+        }
+        return null;
+    }
+}
+
+class ChicagoPizzaStore extends PizzaStore {
+    Pizza createPizza(String type, String size) { 
+        if (type.equals("cheese")) {
+            return new ChicagoStyleCheesePizza(size);
+        }
+        return null;
+    }
+}
+
+public class PizzaMain {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Welcome to the Pizza Store!");
+        System.out.println("Select a store (1 for NY Pizza Store, 2 for Chicago Pizza Store):");
+        int storeChoice = scanner.nextInt();
+
+        PizzaStore pizzaStore;
+
+        if (storeChoice == 1) {
+            pizzaStore = new NyPizzaStore();
+        } else if (storeChoice == 2) {
+            pizzaStore = new ChicagoPizzaStore();
+        } else {
+            System.out.println("Invalid choice. Exiting.");
+            return;
+        }
+
+        while (true) {
+            System.out.println("Menu:");
+            System.out.println("1. Pizza");
+            System.out.println("2. Exit");
+            System.out.print("Enter your choice: ");
+            int choice = scanner.nextInt();
+
+            if (choice == 1) {
+                System.out.print("Enter pizza size (small, medium, large): ");
+                String size = scanner.next().toLowerCase();
+                System.out.print("Enter pizza type (cheese): ");
+                String pizzaType = scanner.next().toLowerCase();
+                Pizza pizza = pizzaStore.orderPizza(pizzaType, size);
+                if (pizza != null) {
+                    System.out.println("You ordered a " + pizza.size + " " + pizza.name + " pizza");
+                }
+            } else if (choice == 2) {
+                break;
+            } else {
+                System.out.println("Invalid choice. Please try again.");
+            }
+        }
+
+        scanner.close();
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+Q.2 Write a python program to implement logistic Regression for handwritten digit dataset.
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn import metrics
+import matplotlib.pyplot as plt
+digits = load_digits()
+X_train, X_test, y_train, y_test = train_test_split(digits.data, digits.target, test_size=0.2, random_state=42)
+model = LogisticRegression(max_iter=10000)
+model.fit(X_train, y_train)
+predictions = model.predict(X_test)
+accuracy = metrics.accuracy_score(y_test, predictions)
+print("Accuracy:", accuracy)
+plt.figure(figsize=(8, 8))
+for i in range(15):
+    plt.subplot(3, 5, i + 1)
+    plt.imshow(X_test[i].reshape(8, 8), cmap='gray')
+    plt.title(f"Predicted: {predictions[i]}")
+    plt.axis('off')
+plt.tight_layout()
+plt.show()
+
+Q.3 Print below array elements using map: a. const fruits = ["apple", "banana", "cherry", “bat”] b. Only print fruits it should remove bat and print it
+Paste the FruitsList.jsx In src Folder
+import React from 'react';
+
+const FruitsList = () => {
+  const fruits = ["apple", "banana", "cherry", "bat"];
+
+  // Filter out "bat" from the fruits array
+  const filteredFruits = fruits.filter(fruit => fruit !== "bat");
+
+  return (
+    <div>
+       <h1>Fruits List</h1>
+      <ul>
+        {filteredFruits.map((fruit, index) => (
+          <li key={index}>{fruit}</li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default FruitsList;
+
+
+
+SLIP 22
+Q.1 Write a Java Program to implement undo command to test Ceiling fan.
+import java.util.Scanner;
+
+// Ceiling Fan class
+class CeilingFan {
+    private boolean isOn;
+
+    public CeilingFan() {
+        isOn = false;
+    }
+
+    public void turnOn() {
+        isOn = true;
+        System.out.println("Ceiling fan is turned on.");
+    }
+
+    public void turnOff() {
+        isOn = false;
+        System.out.println("Ceiling fan is turned off.");
+    }
+
+    public boolean isOn() {
+        return isOn;
+    }
+}
+
+// Remote Control class
+class RemoteControl {
+    private CeilingFan ceilingFan;
+    private boolean previousState;
+
+    public RemoteControl(CeilingFan fan) {
+        ceilingFan = fan;
+        previousState = false;
+    }
+
+    public void pressOn() {
+        previousState = ceilingFan.isOn();
+        ceilingFan.turnOn();
+    }
+
+    public void pressOff() {
+        previousState = ceilingFan.isOn();
+        ceilingFan.turnOff();
+    }
+
+    public void pressUndo() {
+        if (previousState) {
+            ceilingFan.turnOn();
+        } else {
+            ceilingFan.turnOff();
+        }
+    }
+}
+
+public class CeilingFanTests {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        CeilingFan fan = new CeilingFan();
+        RemoteControl remote = new RemoteControl(fan);
+
+        System.out.println("Ceiling Fan Test");
+        while (true) {
+            System.out.println("1. Turn On\n2. Turn Off\n3. Undo\n4. Exit");
+            System.out.print("Enter your choice: ");
+            int choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    remote.pressOn();
+                    break;
+                case 2:
+                    remote.pressOff();
+                    break;
+                case 3:
+                    remote.pressUndo();
+                    break;
+                case 4:
+                    System.out.println("Exiting the program.");
+                    System.exit(0);
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+                    break;
+            }
+        }
+    }
+}
+
+
+Q.2 Write a python program to implement logistic Regression for predicting whether a person will buy the insurance or not. Use insurance_data.csv.
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix
+import matplotlib.pyplot as plt
+import seaborn as sns
+data= pd.read_csv("./csv/insurance_data.csv")
+X = data[['age']]
+y = data['bought_insurance']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+model = LogisticRegression()
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Accuracy: {accuracy * 100:.2f}%")
+conf_matrix = confusion_matrix(y_test, y_pred)
+plt.figure(figsize=(8, 6))
+sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', xticklabels=['Not Bought', 'Bought'], yticklabels=['Not Bought', 'Bought'])
+plt.xlabel('Predicted')
+plt.ylabel('Actual')
+plt.title('Confusion Matrix')
+plt.show()
+
+
+
+
+
+
+
+
+
+
+Q.3 Print below array elements using map: a. let fruits1 = ["apple", "banana"]; b. let fruits2 = ["cherry", "orange"]; c. Merge both fruits array and print it
+Paste the FruitsList.jsx In src Folder
+
+import React from 'react';
+
+const FruitsList = () => {
+  let fruits1 = ["apple", "banana"];
+  let fruits2 = ["cherry", "orange"];
+
+  // Merge both arrays
+  let allFruits = [...fruits1, ...fruits2];
+
+  return (
+    <div>
+      <h1>Slip 9</h1>
+      <h2>Merged Fruits List</h2>
+      <ul>
+        {allFruits.map((fruit, index) => (
+          <li key={index}>{fruit}</li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default FruitsList;
+
+
+
+
+
+
+
+
+*********************************************************************************************
+*********************************************************************************************
+
+
+
+
+SLIP 23
+
+Q.1 Write a Java Program to implement Factory Design pattern for operating system example.
+// Product interface
+interface OperatingSystem {
+    void displayInfo();
+}
+
+// Concrete Products
+class Windows implements OperatingSystem {
+    @Override
+    public void displayInfo() {
+        System.out.println("This is Windows Operating System.");
+    }
+}
+
+class Linux implements OperatingSystem {
+    @Override
+    public void displayInfo() {
+        System.out.println("This is Linux Operating System.");
+    }
+}
+
+class MacOS implements OperatingSystem {
+    @Override
+    public void displayInfo() {
+        System.out.println("This is macOS Operating System.");
+    }
+}
+
+// Factory interface
+interface OperatingSystemFactory {
+    OperatingSystem createOperatingSystem();
+}
+
+// Concrete Factories
+class WindowsFactory implements OperatingSystemFactory {
+    @Override
+    public OperatingSystem createOperatingSystem() {
+        return new Windows();
+    }
+}
+
+class LinuxFactory implements OperatingSystemFactory {
+    @Override
+    public OperatingSystem createOperatingSystem() {
+        return new Linux();
+    }
+}
+
+class MacOSFactory implements OperatingSystemFactory {
+    @Override
+    public OperatingSystem createOperatingSystem() {
+        return new MacOS();
+    }
+}
+
+// Client class
+
+public class OperatingSystemClient {
+    public static void main(String[] args) {
+        // Using the Factory Design Pattern to create different operating systems
+        OperatingSystemFactory windowsFactory = new WindowsFactory();
+        OperatingSystem windowsOS = windowsFactory.createOperatingSystem();
+        windowsOS.displayInfo();
+
+        OperatingSystemFactory linuxFactory = new LinuxFactory();
+        OperatingSystem linuxOS = linuxFactory.createOperatingSystem();
+        linuxOS.displayInfo();
+
+        OperatingSystemFactory macosFactory = new MacOSFactory();
+        OperatingSystem macosOS = macosFactory.createOperatingSystem();
+        macosOS.displayInfo();
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+Q.2 Write a python program to implement multiple Linear Regression for predicting house price.
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+data = pd.read_csv('./csv/Housing.csv')
+X = data[['area', 'bedrooms', 'bathrooms']].values
+y = data['price'].values
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+model = LinearRegression()
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+print(f"Multiple Linear Regression Equation: price = {model.coef_[0]:.2f} * area + {model.coef_[1]:.2f} * bedrooms + {model.coef_[2]:.2f} * bathrooms + {model.intercept_:.2f}")
+print(f"Mean Squared Error: {mse:.2f}")
+print(f"R-squared: {r2:.2f}")
+plt.scatter(X_test[:, 0], y_test, color='blue', label='Actual Data')
+plt.plot(X_test[:, 0], y_pred, color='red', linewidth=2, label='Regression Line')
+plt.xlabel('Area (sqft)')
+plt.ylabel('Price ($)')
+plt.title('House Price Prediction')
+plt.legend()
+plt.show()
+
+Q.3 Print below array elements using map: a. let fruits1 = ["apple", "banana"]; b. let fruits2 = ["cherry", "orange"]; c. Merge both fruits array and print it
+Paste the FruitsList.jsx In src Folder
+import React from 'react';
+
+const FruitsList = () => {
+  let fruits1 = ["apple", "banana"];
+  let fruits2 = ["cherry", "orange"];
+  // Merge both arrays
+  let allFruits = [...fruits1, ...fruits2];
+
+  return (
+    <div>
+      <h1>Merged Fruits List</h1>
+      <ul>
+        {allFruits.map((fruit, index) => (
+          <li key={index}>{fruit}</li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+export default FruitsList;
+
+
+*********************************************************************************************
+*********************************************************************************************
+
+SLIP 24
+
+Q.1 Write a Java Program to implement Singleton pattern for multithreading.
+public class Singleton {
+    // Declare the volatile instance variable to ensure visibility across threads
+    private static volatile Singleton instance;
+
+    // Private constructor to prevent instantiation from other classes
+    private Singleton() {
+        // Initialize the instance as needed
+    }
+
+    // Double-Checked Locking to ensure only one instance is created
+    public static Singleton getInstance() {
+        if (instance == null) {
+            synchronized (Singleton.class) {
+                if (instance == null) {
+                    instance = new Singleton();
+                }
+            }
+        }
+        return instance;
+    }
+
+    // Add other methods or attributes as needed
+    public void showMessage() {
+        System.out.println("Hello from Singleton!");
+    }
+
+    public static void main(String[] args) {
+        // Create multiple threads to access the Singleton
+        Thread thread1 = new Thread(() -> {
+            Singleton singleton = Singleton.getInstance();
+            singleton.showMessage();
+        });
+
+        Thread thread2 = new Thread(() -> {
+            Singleton singleton = Singleton.getInstance();
+            singleton.showMessage();
+        });
+
+        // Start the threads
+        thread1.start();
+        thread2.start();
+    }
+}
+
+
+Q.2 Write a python program to implement simple Linear Regression for predicting house price.
+
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+
+data = pd.read_csv('./csv/Housing.csv')
+X = data['area'].values.reshape(-1, 1)
+y = data['price'].values
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+model = LinearRegression()
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+slope = model.coef_[0]
+intercept = model.intercept_
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+print(f"Linear Regression Equation: price = {slope:.2f} * area + {intercept:.2f}")
+print(f"Mean Squared Error: {mse:.2f}")
+print(f"R-squared: {r2:.2f}")
+plt.scatter(X_test, y_test, color='blue', label='Actual Data')
+plt.plot(X_test, y_pred, color='red', linewidth=2, label='Regression Line')
+plt.xlabel('Area (sqft)')
+plt.ylabel('Price ($)')
+plt.title('House Price Prediction')
+plt.legend()
+plt.show()
+
+
+
+Q.3 Print below array elements using map: a. let fruits1 = ["apple", "banana"]; b. let fruits2 = ["cherry", "orange"]; c. Merge both fruits array and print it
+
+
+
+Paste the FruitsList.jsx In src Folder
+
+
+mport React from 'react';
+const FruitsList = () => {
+  let fruits1 = ["apple", "banana"];
+  let fruits2 = ["cherry", "orange"];
+  // Merge both arrays
+  let allFruits = [...fruits1, ...fruits2];
+  return (
+    <div>
+      <h1>Merged Fruits List</h1>
+      <ul>
+        {allFruits.map((fruit, index) => (
+          <li key={index}>{fruit}</li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+export default FruitsList;
+
+
+*********************************************************************************************
+*********************************************************************************************
+
+
+SLIP 25
+
+
+Q.1 Write a Java Program to implement Iterator Pattern for Designing Menu like Breakfast, Lunch or Dinner Menu.
+//QUESTION 9
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Scanner;
+
+// Define MenuItem class to represent menu items
+class MenuItem {
+    private String name;
+    private double price;
+
+    public MenuItem(String name, double price) {
+        this.name = name;
+        this.price = price;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+}
+
+// Define a Menu interface with an iterator method
+interface Menu {
+    Iterator<MenuItem> createIterator();
+}
+
+// Implement BreakfastMenu class
+class BreakfastMenu implements Menu {
+    private ArrayList<MenuItem> items;
+
+    public BreakfastMenu() {
+        items = new ArrayList<>();
+        addItem("Pancakes", 40);
+        addItem("Omelette", 50);
+    }
+
+    public void addItem(String name, double price) {
+        MenuItem menuItem = new MenuItem(name, price);
+        items.add(menuItem);
+    }
+
+    public Iterator<MenuItem> createIterator() {
+        return items.iterator();
+    }
+}
+
+// Implement LunchMenu class (similar to BreakfastMenu)
+class LunchMenu implements Menu {
+    private ArrayList<MenuItem> items;
+
+    public LunchMenu() {
+        items = new ArrayList<>();
+        addItem("Burger", 90);
+        addItem("Salad", 60);
+    }
+
+    public void addItem(String name, double price) {
+        MenuItem menuItem = new MenuItem(name, price);
+        items.add(menuItem);
+    }
+
+    public Iterator<MenuItem> createIterator() {
+        return items.iterator();
+    }
+}
+
+// Implement DinnerMenu class (similar to BreakfastMenu)
+class DinnerMenu implements Menu {
+    private ArrayList<MenuItem> items;
+
+    public DinnerMenu() {
+        items = new ArrayList<>();
+        addItem("Steak", 150);
+        addItem("Fish", 120);
+    }
+
+    public void addItem(String name, double price) {
+        MenuItem menuItem = new MenuItem(name, price);
+        items.add(menuItem);
+    }
+
+    public Iterator<MenuItem> createIterator() {
+        return items.iterator();
+    }
+}
+
+// Define a Waitress class to interact with menus
+class Waitress {
+    private Menu menu;
+
+    public Waitress(Menu menu) {
+        this.menu = menu;
+    }
+
+    public void printMenu() {
+        Iterator<MenuItem> iterator = menu.createIterator();
+        while (iterator.hasNext()) {
+            MenuItem menuItem = iterator.next();
+            System.out.println(menuItem.getName() + ": Rs." + menuItem.getPrice());
+        }
+    }
+
+    public void takeOrder() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Please enter the item you'd like to order: ");
+        String order = scanner.nextLine();
+        System.out.println("You ordered: " + order);
+    }
+}
+
+public class Break {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Select a menu: ");
+        System.out.println("1. Breakfast");
+        System.out.println("2. Lunch");
+        System.out.println("3. Dinner");
+        int userChoice = scanner.nextInt();
+
+        Menu selectedMenu = null;
+
+        switch (userChoice) {
+            case 1:
+                selectedMenu = new BreakfastMenu();
+                break;
+            case 2:
+                selectedMenu = new LunchMenu();
+                break;
+            case 3:
+                selectedMenu = new DinnerMenu();
+                break;
+            default:
+                System.out.println("Invalid choice");
+                return;
+        }
+
+        Waitress waitress = new Waitress(selectedMenu);
+        waitress.printMenu();
+        waitress.takeOrder();
+
+        System.out.println("Enjoy your meal !");
+    }
+}
+
+
+Q.2 Write a python program to transform data with Principal Component Analysis (PCA). Use handwritten digit dataset.
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+from sklearn.datasets import load_digits
+
+# Load the digits dataset
+digits = load_digits()
+data = digits.data
+target = digits.target
+
+# Visualize a few digits before PCA
+fig, axes = plt.subplots(2, 5, figsize=(10, 5),
+                         subplot_kw={'xticks':[], 'yticks':[]},
+                         gridspec_kw=dict(hspace=0.1, wspace=0.1))
+
+for i, ax in enumerate(axes.flat):
+    ax.imshow(digits.images[i], cmap='binary', interpolation='nearest')
+    ax.text(0.05, 0.05, str(digits.target[i]),
+            transform=ax.transAxes, color='green')
+
+plt.show()
+
+# Apply PCA to reduce the dimensionality
+n_components = 2  # You can adjust the number of components as needed
+pca = PCA(n_components=n_components)
+transformed_data = pca.fit_transform(data)
+
+# Visualize the dataset after PCA
+plt.figure(figsize=(8, 6))
+for i in range(10):
+    plt.scatter(transformed_data[target == i, 0], transformed_data[target == i, 1],
+                label=str(i), alpha=0.7)
+
+plt.title('Handwritten Digit Dataset after PCA')
+plt.xlabel('Principal Component 1')
+plt.ylabel('Principal Component 2')
+plt.legend()
+plt.show()
+
+# import numpy as np
+# import matplotlib.pyplot as plt
+# from sklearn import datasets
+# from sklearn.decomposition import PCA
+
+# # Load the digits dataset
+# digits = datasets.load_digits()
+# X = digits.data
+# y = digits.target
+
+# # Perform PCA
+# pca = PCA(n_components=2)
+# X_pca = pca.fit_transform(X)
+
+# # Plot the original data and PCA-transformed data with digits
+# plt.figure(figsize=(12, 6))
+
+# plt.subplot(1, 2, 1)
+# plt.scatter(X[:, 0], X[:, 1], c=y, cmap='viridis', alpha=0.5)
+# plt.title('Original Data')
+# plt.xlabel('Feature 1')
+# plt.ylabel('Feature 2')
+
+# plt.subplot(1, 2, 2)
+# plt.scatter(X_pca[:, 0], X_pca[:, 1], c=y, cmap='viridis', alpha=0.5)
+# plt.title('Data after PCA')
+# plt.xlabel('Principal Component 1')
+# plt.ylabel('Principal Component 2')
+
+# plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+Q.3 Implement useEffect hook and print all three life cycle states a. e.g Inside mount b. e.g Inside update c. e.g Inside unmount
+Paste LifecycleExample.jsx in src folder
+After Running The React App On Port . Press Right Click On Web Page And Choose Inspect Option And Select The Console Tab To Show The Log .
+import React, { useState, useEffect } from 'react';
+
+const LifecycleExample = () => {
+  // Mounting
+  useEffect(() => {
+    console.log('Inside mount');
+    
+    // Cleanup function (will be called on unmount)
+    return () => {
+      console.log('Inside unmount');
+    };
+  }, []);
+
+  // Updating
+  useEffect(() => {
+    console.log('Inside update');
+
+    // Cleanup function (will be called on update and unmount)
+    return () => {
+      console.log('Inside unmount (from update)');
+    };
+  });
+
+  // State for updating
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <h1>Lifecycle Example</h1>
+      <p>Current Count: {count}</p>
+      <button onClick={() => setCount(count + 1)}>Increase Count</button>
+    </div>
+  );
+};
+
+export default LifecycleExample;
+
+
+
+
