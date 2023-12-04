@@ -1,0 +1,803 @@
+SLIP_1
+
+1. Consider the Movie Data set. Write a Map Reduce program to find
+average rating per user. 
+from mrjob.job import MRJob
+class AvgRatingPerUser(MRJob):
+    def mapper(self,key,line):
+        (uId,mId,rating,ts)=line.split("\t")
+        yield uId,float(rating)
+
+    def reducer(self,uId,rating):
+        sum=0.0
+        r=0.0
+        for x in rating:
+            sum=sum+x
+            r=r+1
+            avg=sum/r
+        yield uId,avg  
+
+if __name__=="__main__":
+    AvgRatingPerUser.run()
+
+--------------------------------------------------------------------------
+2. Solve the following using HIVE
+Write HQL queries for the following
+1. Create a database with the name “Udetails”
+   CREATE DATABASE IF NOT EXISTS Udetails;
+
+2. Use the above created Database.
+   USE Udetails;
+
+3. Create a table UserData with the fields (uid, name, age,
+gender, occupation, zipcode) where fields are terminated
+by “ , ”.
+   CREATE TABLE IF NOT EXISTS UserData (
+    uid INT,
+    name STRING,
+    age INT,
+    gender STRING,
+    occupation STRING,
+    zipcode INT
+) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';
+
+4. Load data from local storage in the path
+/home/abc/data/UData.txt’ in the above table
+  LOAD DATA LOCAL INPATH '/home/abc/data/UData.txt' INTO TABLE UserData;
+
+5. Find number of users for each age
+   SELECT age, COUNT(*) AS user_count
+   FROM UserData
+   GROUP BY age;
+
+6. Add a column email_id to the above table
+   -- Create a new table with the email_id column
+CREATE TABLE UserDataWithEmail (
+    uid INT,
+    name STRING,
+    age INT,
+    gender STRING,
+    occupation STRING,
+    zipcode INT,
+    email_id STRING
+) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';
+
+-- Insert data from the old table into the new table
+INSERT OVERWRITE TABLE UserDataWithEmail
+SELECT uid, name, age, gender, occupation, zipcode, NULL AS email_id
+FROM UserData;
+
+*******************************************************************************************
+SLIP_2
+
+1. Consider the Movie Data set. Write a Map Reduce program to find
+number of ratings per rating value.
+
+from mrjob.job import MRJob
+
+class RatingPerRating(MRJob):
+    def mapper(self,key,line):
+        (uId,mId,rating,ts)=line.split("\t")
+        yield rating,1
+
+    def reducer(self,rating,occurences):
+        yield rating,sum(occurences)
+    
+if __name__=="__main__":
+    RatingPerRating.run()
+
+-----------------------------------------------------------------------------------------
+
+2. Solve the following using HIVE [10]
+Write HQL queries for the following
+1. Create a database with the name “Udetails”
+   CREATE DATABASE IF NOT EXISTS Udetails;
+
+2. Use the above created Database.
+   USE Udetails;
+
+3. Create a table UserData with the fields (uid, name, age,
+gender, occupation, zipcode) where fields are terminated
+by “ , ”.
+   CREATE TABLE IF NOT EXISTS UserData (
+    uid INT,
+    name STRING,
+    age INT,
+    gender STRING,
+    occupation STRING,
+    zipcode INT
+) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';
+
+4. Load data from local storage in the path
+/home/abc/data/UData.txt’ in the above table
+   LOAD DATA LOCAL INPATH '/home/abc/data/UData.txt' INTO TABLE UserData;
+
+5. Find average age of all females.
+   SELECT AVG(age) AS average_age_female
+   FROM UserData
+   WHERE gender = 'female';
+
+6. Find number of users who are “IT Professionals
+   SELECT COUNT(*) AS num_IT_professionals
+   FROM UserData
+   WHERE occupation = 'IT Professional';
+
+******************************************************************************************
+
+SLIP_3
+
+1. Consider the Movie Data set. Write a Map Reduce program to find
+number of movies watched by each user.
+from mrjob.job import MRJob
+
+class MoviesPerUser(MRJob):
+    def mapper(self,key,line):
+        (uId,mId,rating,ts)=line.split("\t")
+        yield uId,1
+
+    def reducer(self,uId,count):
+        yield uId,sum(count)
+
+if __name__=="__main__":
+    MoviesPerUser.run()
+
+2. Solve the following using HIVE [10]
+Write HQL queries for the following
+1. Create a database with the name “Udetails”
+   CREATE DATABASE IF NOT EXISTS Udetails;
+
+2. Use the above created Database.
+   USE Udetails;
+
+3. Create a table UserData with the fields (uid, name, age,
+gender, occupation, zipcode) where fields are terminated
+by “ , ”.
+   CREATE TABLE IF NOT EXISTS UserData (
+    uid INT,
+    name STRING,
+    age INT,
+    gender STRING,
+    occupation STRING,
+    zipcode STRING
+) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';
+
+4. Load data from local storage in the path
+/home/abc/data/UData.txt’ in the above table
+   LOAD DATA LOCAL INPATH '/home/abc/data/UData.txt' INTO TABLE UserData;
+
+5. Find average age of all females.
+   SELECT AVG(age) AS average_age_of_females
+   FROM UserData
+   WHERE gender = 'female';
+
+6. Find number of users for each age
+   SELECT age, COUNT(*) AS user_count
+   FROM UserData
+   GROUP BY age
+   ORDER BY age;
+****************************************************************************************
+SLIP_4
+
+1. Consider the Friends Data set. Write a Map Reduce program to find 
+number of friends per user.
+from mrjob.job import MRJob
+class NoFriendsPerUser(MRJob):
+    def mapper(self,key,line):
+        (userID,name,age,friends)=line.split(",")
+        yield userID,int(friends)
+        
+    def reducer(Self,userID,friends):
+        total=0
+        
+        for x in friends:
+            total=total+x
+            
+        
+        yield userID,int(total)
+    
+if __name__=='__main__':
+    NoFriendsPerUser.run()
+
+
+2. Solve the following using HIVE [10]
+Write HQL queries for the following
+1. Create a database with the name “Udetails”
+   CREATE DATABASE IF NOT EXISTS Udetails;
+
+2. Use the above created Database.
+   USE Udetails;
+
+3. Create a table UserData with the fields (uid, name, age,
+gender, occupation, zipcode) where fields are terminated
+by “ , ”.
+   CREATE TABLE IF NOT EXISTS UserData (
+    uid INT,
+    name STRING,
+    age INT,
+    gender STRING,
+    occupation STRING,
+    zipcode STRING
+) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';
+
+4. Load data from local storage in the path
+/home/abc/data/UData.txt’ in the above table
+   LOAD DATA LOCAL INPATH '/home/abc/data/UData.txt' INTO TABLE UserData;
+
+5. Create the same table for UserData partitioned on gender
+   CREATE TABLE UserData_partitioned (
+    uid INT,
+    name STRING,
+    age INT,
+    occupation STRING,
+    zipcode INT
+)
+PARTITIONED BY (gender STRING)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ',';
+
+  
+6. Find number of users for each age
+   SELECT age, COUNT(*) AS user_count
+   FROM UserData
+   GROUP BY age;
+
+
+******************************************************************************************
+SLIP_5
+
+1. Consider the Friends Data set. Write a Map Reduce program to find
+average number friends for each age value. [20]
+from mrjob.job import MRJob
+
+class AvgFriendsPerAge(MRJob):
+    def mapper(self,key,line):
+        (uID,name,age,friends)=line.split(",")
+        yield age,int(friends)
+
+    def reducer(self,age,friends):
+        total=0
+        n=0
+        for x in friends:
+            total=total+x
+            n=n+1
+            avg=total/n
+        yield age,avg
+
+if __name__=="__main__":
+    AvgFriendsPerAge.run()
+
+
+
+2. Solve the following using HIVE [10]
+Write HQL queries for the following
+1. Create a database with the name IRating
+   CREATE DATABASE IF NOT EXISTS IRating;
+
+2. Use the above created database
+   USE IRating;
+
+3. Create table Rating with the fields(userid, item_id, rating,
+timestamp) where fields are terminated by ‘\t’
+   CREATE TABLE IF NOT EXISTS Rating (
+    userid INT,
+    item_id INT,
+    rating INT,
+    timestamp STRING
+) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t';
+
+4. Load data from local storage in the path
+home/user/data/Item_Rating”
+   LOAD DATA LOCAL INPATH '/home/user/data/Item_Rating' INTO TABLE Rating;
+
+5. Display first 20 rows of the table
+   SELECT * FROM Rating LIMIT 20;
+
+6. Find the total number of ratings for each user
+   SELECT userid, COUNT(*) AS total_ratings
+   FROM Rating
+   GROUP BY userid;
+*******************************************************************************************
+SLIP_6
+
+1. Consider the Friends Data set. Write a Map Reduce program to find
+agewise number of friends sorted on age. [20]
+from mrjob.job import MRJob
+
+class SortedFriendsOnAge(MRJob):
+    def mapper(self,key,line):
+        (uId,name,age,friends)=line.split(",")
+        yield int(age),int(friends)
+
+    def reducer(self,age,friends):
+        yield int(age),sum(friends)
+
+if __name__=="__main__":
+    SortedFriendsOnAge.run()
+
+
+2. Solve the following using HIVE [10]
+Write HQL queries for the following
+1. Create a database with the name IRating
+   CREATE DATABASE IF NOT EXISTS IRating;
+
+2. Use the above created database
+   USE IRating;
+3. Create table Rating with the fields(userid, item_id, rating,
+timestamp) where fields are terminated by ‘\t’
+   CREATE TABLE IF NOT EXISTS Rating (
+    userid INT,
+    item_id INT,
+    rating FLOAT,
+    timestamp STRING
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY '\t';
+
+4. Load data from local storage in the path
+home/user/data/Item_Rating”
+   LOAD DATA LOCAL INPATH '/home/user/data/Item_Rating' INTO TABLE Rating;
+
+5. Find the average number of ratings per Item
+   SELECT item_id, AVG(rating) AS avg_rating
+   FROM Rating
+   GROUP BY item_id;
+
+6. List the Item_id of all items which have received rating
+   greater than 4
+   SELECT DISTINCT item_id
+   FROM Rating
+   WHERE rating > 4;
+
+*******************************************************************************************
+SLIP_7
+
+1. Consider a Book text file. Write a Map Reduce program to find word 
+count. [20]
+from mrjob.job import MRJob
+import re
+
+class WordCount(MRJob):
+
+    def mapper(self,key, line):
+        words = re.findall(r'\w+', line.lower())
+        for word in words:
+            yield word, 1
+
+    def reducer(self, word, counts):
+        yield word, sum(counts)
+
+if __name__ == "__main__":
+    WordCount.run()
+
+2. Solve the following using HIVE [10]
+Write HQL queries for the following
+1. Create a database with the name IRating
+   CREATE DATABASE IF NOT EXISTS IRating;
+2. Use the above created database
+   USE IRating;
+3. Create table Rating with the fields(userid, item_id, rating,
+timestamp) where fields are terminated by ‘\t’
+   CREATE TABLE IF NOT EXISTS Rating (
+    userid INT,
+    item_id INT,
+    rating FLOAT,
+    timestamp STRING
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY '\t';
+4. Load data from local storage in the path
+home/user/data/Item_Rating”
+   LOAD DATA LOCAL INPATH '/home/user/data/Item_Rating' INTO TABLE Rating;
+5. Display first 100 rows of the table
+   SELECT * FROM Rating LIMIT 100
+
+6. List the Item_id of all items which have received rating
+greater than 4
+   SELECT DISTINCT item_id
+   FROM Rating
+   WHERE rating > 4;
+ *****************************************************************************************
+
+SLIP_8
+
+1. Consider the Movie Data set. Write a Map Reduce program to find
+average rating per user. [20]
+from mrjob.job import MRJob
+class AvgRatingPerUser(MRJob):
+    def mapper(self,key,line):
+        (uId,mId,rating,ts)=line.split("\t")
+        yield uId,float(rating)
+
+    def reducer(self,uId,rating):
+        sum=0.0
+        r=0.0
+        for x in rating:
+            sum=sum+x
+            r=r+1
+            avg=sum/r
+        yield uId,avg  
+
+if __name__=="__main__":
+    AvgRatingPerUser.run()
+
+2. Solve the following using HIVE [10]
+Write HQL queries for the following
+1. Create a database with the name StudDetail
+   CREATE DATABASE IF NOT EXISTS StudDetail;
+2. Use the above created database.
+   USE StudDetail;
+3. Create table Student with the fields(Stident_id, age, class,
+Subject_opted, marks ) where fields are terminated by ‘,’
+   CREATE TABLE IF NOT EXISTS Student (
+    Student_id INT,
+    age INT,
+    class INT,
+    Subject_opted STRING,
+    marks FLOAT
+)
+4. Load data from local storage in the path
+home/user/data/stud_marks”
+   LOAD DATA LOCAL INPATH '/home/user/data/stud_marks' INTO TABLE Student;
+5. Find the total number of students per class.
+   SELECT class, COUNT(*) AS total_students
+   FROM Student
+   GROUP BY class;
+6. Find subject wise maximum marks
+   SELECT Subject_opted, MAX(marks) AS max_marks
+   FROM Student
+   GROUP BY Subject_opted;
+
+*******************************************************************************************
+
+SLIP_9
+
+1. Considerthe Temperature Data set. Write a Map Reduce program to find
+minimum temperature for each weather station. [20]
+from mrjob.job import MRJob
+
+class MinTemp(MRJob):
+    def mapper(self,key,line):
+        (sID,date,type,values,a,b,c,d)=line.split(",")
+        yield sID,int(values)
+
+    def reducer(self,sID,values):
+        yield sID,min(values)
+
+if __name__=="__main__":
+    MinTemp.run()
+
+2. Solve the following using HIVE [10]
+Write HQL queries for the following
+1. Create a database with the name StudDetail
+   CREATE DATABASE IF NOT EXISTS StudDetail;
+   
+2. Use the above created database.
+   USE StudDetail;
+3. Create table Student with the fields(Stident_id, age, class,
+Subject_opted, marks ) where fields are terminated by ‘,’
+   CREATE TABLE IF NOT EXISTS Student (
+    Student_id INT,
+    age INT,
+    class INT,
+    Subject_opted STRING,
+    marks FLOAT
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ',';
+
+4. Load data from local storage in the path
+home/user/data/stud_marks
+   LOAD DATA LOCAL INPATH '/home/user/data/stud_marks' INTO TABLE Student;
+   
+5. Find the average marks per subject
+   SELECT Subject_opted, AVG(marks) AS avg_marks
+FROM Student
+GROUP BY Subject_opted;
+
+6. Find subject wise maximum marks
+   SELECT Subject_opted, MAX(marks) AS max_marks
+FROM Student
+GROUP BY Subject_opted;
+
+*******************************************************************************************
+
+SLIP_10
+
+1. Considerthe Temperature Data set. Write a Map Reduce program to find
+maximum temperature for each weather station. [20]
+from mrjob.job import MRJob
+
+class MaxTemp(MRJob):
+    def mapper(self,key,line):
+     (sID,date,type,values,a,b,c,d)=line.split(",")
+     yield sID,int(values)
+
+    def reducer(self,sID,values):
+       yield sID,max(values)
+
+if __name__ == "__main__":
+   MaxTemp.run()
+
+2. Solve the following using Pig [10]
+Write PIG script for the following
+1.Consider the employee.csv file in the format (eno, ename,
+salary, dept, age)
+
+2.Write a pig script to load a file “employee.csv”.
+  employee_data = LOAD 'employee.csv' USING PigStorage(',') AS (eno:int, ename:chararray, salary:float, dept:chararray, age:int);
+
+3.Write a pig script to display all employees of Computer
+Department.
+ computer_dept = FILTER employee_data BY dept == 'Computer';
+
+4.Write a pig script to display all employees whose age is less
+than 30.
+young_employees = FILTER employee_data BY age < 30;
+
+
+5.Write a pig script to group the above relation by department.
+  grouped_by_dept = GROUP employee_data BY dept;
+  
+6.Write a Pig script to display employee having maximum
+age.
+max_age = FOREACH employee_data GENERATE MAX(age);
+max_age_employee = FILTER employee_data BY age == max_age;
+******************************************************************************************
+
+SLIP_11
+
+1. Consider the Customer order Data set. Write a Map Reduce program to 
+find the amount spent by each customer. [20]
+from mrjob.job import MRJob
+
+class AmountPerCustomer(MRJob):
+    def mapper(self,key,line):
+        (cID,oID,item,amount)=line.split(",")
+        yield cID,int(amount)
+
+    def reducer(self,cID,amount):
+        yield cID,sum(amount)
+
+if __name__=="__main__":
+    AmountPerCustomer.run()
+
+
+2. Solve the following using Pig [10]
+Write PIG script for the following
+1. Consider the Movie.csv file in the format (Movie_id,
+M_title, Release_year, Votes, score)
+2. Write a pig script to load a file “Movie.csv”.
+   movie_data = LOAD 'Movie.csv' USING PigStorage(',') AS (Movie_id:int, M_title:chararray, Release_year:int, Votes:int, score:float);
+
+3. Write a pig script to dump the titles of movies that have
+a score higher than 8.
+   high_score_movies = FILTER movie_data BY score > 8.0;
+   titles_high_score_movies = FOREACH high_score_movies GENERATE M_title;
+   DUMP titles_high_score_movies;
+
+4. Write a pig script to dump the title and year of movies
+made in year 1980.
+   movies_1980 = FILTER movie_data BY Release_year == 1980;
+titles_year_1980 = FOREACH movies_1980 GENERATE M_title, Release_year;
+DUMP titles_year_1980;
+
+5. Write a pig script to dump the top 5 highest vote-getting
+movies (use ORDER and LIMIT).
+   top_5_voted = ORDER movie_data BY Votes DESC;
+top_5_voted = LIMIT top_5_voted 5;
+DUMP top_5_voted;
+
+6. Write a pig script to group Movie relation by votes
+   grouped_by_votes = GROUP movie_data BY Votes;
+DUMP grouped_by_votes;
+******************************************************************************************
+
+SLIP_12
+
+1.Consider the Movie Data set. Write a Map Reduce program to find 
+average rating per user. [20]
+from mrjob.job import MRJob
+class AvgRatingPerUser(MRJob):
+    def mapper(self,key,line):
+        (uId,mId,rating,ts)=line.split("\t")
+        yield uId,float(rating)
+
+    def reducer(self,uId,rating):
+        sum=0.0
+        r=0.0
+        for x in rating:
+            sum=sum+x
+            r=r+1
+            avg=sum/r
+        yield uId,avg  
+
+if __name__=="__main__":
+    AvgRatingPerUser.run()
+
+2. Solve the following using Pig [10]
+Write PIG script for the following
+1. Consider the employee.csv file in the format (eno, ename,
+salary, dept, age)
+   
+2. Write a pig script to load a file “employee.csv”
+   employee_data = LOAD 'employee.csv' USING PigStorage(',') AS (eno:int, ename:chararray, salary:float, dept:chararray, age:int);
+
+3. Write a pig script to group the above relation by salary.
+   grouped_by_salary = GROUP employee_data BY salary;
+
+4. Write a pig script to display all employees of Computer
+Department.
+   computer_dept = FILTER employee_data BY dept == 'Computer';
+
+5. Write a pig script do display department wise sum of salary.
+   dept_sum_salary = FOREACH (GROUP employee_data BY dept) GENERATE group AS dept, SUM(employee_data.salary) AS total_salary;
+
+6. Write a pig script to display all employees according to
+descending order of employee name.
+   sorted_employees = ORDER employee_data BY ename DESC;
+
+*******************************************************************************************
+
+SLIP_13
+
+1. Consider the Movie Data set. Write a Map Reduce program to find 
+average rating per user. [20]
+from mrjob.job import MRJob
+class AvgRatingPerUser(MRJob):
+    def mapper(self,key,line):
+        (uId,mId,rating,ts)=line.split("\t")
+        yield uId,float(rating)
+
+    def reducer(self,uId,rating):
+        sum=0.0
+        r=0.0
+        for x in rating:
+            sum=sum+x
+            r=r+1
+            avg=sum/r
+        yield uId,avg  
+
+if __name__=="__main__":
+    AvgRatingPerUser.run()
+
+2. Solve the following using Pig [10]
+Write PIG script for the following
+1. Consider the employee.csv file in the format (eno, ename,
+salary, dept, age)
+2. Write a pig script to load a file “employee.csv”
+   employee_data = LOAD 'employee.csv' USING PigStorage(',') AS (eno:int, ename:chararray, salary:float, dept:chararray, age:int);
+
+   
+3. Write a Pig script to display employee having maximum
+age.
+   max_age_employee = FILTER employee_data BY age == (SELECT MAX(age) FROM employee_data);
+
+4. Write a pig script do display department wise sum of salary.
+   dept_sum_salary = FOREACH (GROUP employee_data BY dept) GENERATE group AS dept, SUM(employee_data.salary) AS total_salary;
+
+5. Write a pig script to display all employees according to
+descending order of employee name.
+   sorted_employees = ORDER employee_data BY ename DESC;
+
+6. Write a pig script to display employees of Sales department
+   sales_employees = FILTER employee_data BY dept == 'Sales';
+
+*******************************************************************************************
+
+SLIP_14
+
+1. Consider a book txt file. Write a Map Reduce program to display word
+count in sorted order. [20]
+from mrjob.job import MRJob
+from mrjob.step import MRStep
+
+class SortedFrequency(MRJob):
+    def steps(self):
+        return[
+            MRStep(mapper=self.mapper_one,
+                   reducer=self.reducer_one),
+            MRStep(mapper=self.mapper_two,
+                   reducer=self.reducer_two)       
+        ]
+    def mapper_one(self,key,line):
+        word=line.split(' ')
+        for word in word:
+            yield word.lower(),1
+
+    def reducer_one(self,word,count):
+        yield word,sum(count)
+
+    def mapper_two(self,word,total):
+           yield total,word
+    
+    def reducer_two(self,total,word):
+        for word in word:
+            yield total,word
+                                                     
+if __name__=="__main__":
+    SortedFrequency.run()
+
+
+2. A Solve the following using Pig [10]
+Write PIG script for the following
+1. Consider the Movie.csv file in the format (Movie_id,
+M_title, Release_year, Votes, score)
+2. Write a pig script to load a file “Movie.csv”.
+   movie_data = LOAD 'Movie.csv' USING PigStorage(',') AS (Movie_id:int, M_title:chararray,      Release_year:int, Votes:int, score:float);
+
+3. Write a pig script to dump the titles of movies that have
+more than 100 votes.
+    high_votes_movies = FILTER movie_data BY Votes > 100;
+titles_high_votes_movies = FOREACH high_votes_movies GENERATE M_title;
+DUMP titles_high_votes_movies;
+
+4. Write a pig script to dump the title and votes of movies made
+in year 2020.
+    movies_2020 = FILTER movie_data BY Release_year == 2020;
+titles_votes_2020 = FOREACH movies_2020 GENERATE M_title, Votes;
+DUMP titles_votes_2020;
+
+5. Write a pig script to dump the votes and score of the movie
+“Bhoot”
+   grouped_by_votes = GROUP movie_data BY Votes;
+DUMP grouped_by_votes;
+
+6. Write a pig script to group Movie relation by votes
+   grouped_by_votes = GROUP movie_data BY Votes;
+DUMP grouped_by_votes;
+
+*******************************************************************************************
+
+SLIP_15
+
+1. Consider the Movie Data set. Write a Map Reduce program to find 
+average rating per Movie. [20]
+from mrjob.job import MRJob
+
+class AvgRatingPerMovie(MRJob):
+    def mapper(self,key,line):
+        (uId,mId,rating,ts)=line.split("\t")
+        yield int(mId),float(rating)
+
+    def reducer(self,mId,rating):
+        sum=0.0
+        r=0.0
+        for x in rating:
+            sum=sum+x
+            r=r+1
+            avg=sum/r
+        yield int(mId),float(avg)  
+
+if __name__=="__main__":
+    AvgRatingPerMovie.run()
+
+2. Solve the following using Pig [10]
+Write PIG script for the following
+1. Consider the student.csv file in the format (Rollno, Sname,
+age, class, phone, city)
+2. Write a pig script to load a file “student.csv”
+   student_data = LOAD 'student.csv' USING PigStorage(',') AS (Rollno:int, Sname:chararray, age:int, class:int, phone:chararray, city:chararray);
+
+3. Write a pig script to group the above relation by age.
+   grouped_by_age = GROUP student_data BY age;
+
+4. Write a pig script to display all employees of Computer
+Department.
+   computer_students = FILTER student_data BY class == <Computer_Department_Class_Number>;
+
+5. Write a pig script do display class wise number of students.
+   class_wise_count = FOREACH (GROUP student_data BY class) GENERATE group AS class, COUNT(student_data) AS num_students;
+
+6. Write a pig script to display all students according to
+descending order of student name.
+   sorted_students = ORDER student_data BY Sname DESC;
+
+*******************************************************************************************
+
+
+
+   
+
+
+
+   
